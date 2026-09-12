@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn - Deluxe 2D Edition</title>
+  <title>Bác Sĩ Diệt Khuẩn - Organic Bio Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <style>
@@ -22,10 +22,6 @@
       background: radial-gradient(circle at 50% 50%, #064e3b 0%, #022c22 45%, #020617 100%);
     }
     .pixel-font { font-family: 'VT323', monospace; }
-    canvas { image-rendering: pixelated; }
-    .arcade-glow {
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.25), inset 0 0 15px rgba(0, 0, 0, 0.8);
-    }
   </style>
 </head>
 <body class="text-white flex flex-col items-center justify-between h-full p-2 font-sans">
@@ -38,10 +34,10 @@
     <div class="pixel-font text-5xl text-emerald-400 mb-1 font-bold drop-shadow-[0_0_15px_rgba(52,211,153,0.8)]">
       BÁC SĨ DIỆT KHUẨN
     </div>
-    <div class="pixel-font text-2xl text-amber-300 mb-4 tracking-wider">DELUXE 2D BIO-WAR</div>
+    <div class="pixel-font text-2xl text-amber-300 mb-4 tracking-wider">ORGANIC BIO-WARFARE</div>
     <p class="text-xs text-slate-300 mb-6 max-w-xs leading-relaxed">
-      Kéo ngón tay để lướt ống tiêm & tự động xả đạn.<br>
-      Tránh giọt độc tố và hạ gục <strong>Mega Boss</strong> biến dị ở Wave 3!
+      👉 Kéo ngón tay để lướt ống tiêm & tự động xả đạn.<br>
+      Nhặt <strong>Lọ Vắc-xin</strong> để kích hoạt <strong>Hào Quang Miễn Dịch</strong> và thăng cấp kho đạn Nano!
     </p>
     <button onclick="startGame()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 active:scale-95 pixel-font text-3xl px-10 py-3 rounded-2xl border-2 border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
       ▶ BẮT ĐẦU CHIẾN DỊCH
@@ -54,13 +50,13 @@
       NHIỄM TRÙNG HUYẾT!
     </div>
     <p class="text-sm text-slate-200 mb-3">Mầm bệnh đã xâm nhập toàn bộ cơ thể!</p>
-    <div class="pixel-font text-4xl text-amber-300 mb-6">ĐIỂM SỐ: <span id="final-score">0</span></div>
+    <div class="pixel-font text-4xl text-amber-300 mb-6">ĐIỂM: <span id="final-score">0</span></div>
     <button onclick="restartGame()" class="bg-gradient-to-r from-rose-600 to-pink-600 active:scale-95 pixel-font text-2xl px-8 py-3 rounded-xl border-2 border-rose-300 shadow-[0_0_15px_rgba(225,29,72,0.6)]">
-      TÁI THIẾT LẬP CA TRỰC
+      TÁI LẬP CA TRỰC
     </button>
   </div>
 
-  <!-- HEADER GIAO DIỆN HIỆN ĐẠI -->
+  <!-- HEADER BẢNG ĐIỀU KHIỂN -->
   <div class="w-full max-w-sm flex justify-between items-center bg-slate-900/80 backdrop-blur border border-emerald-500/30 px-3.5 py-1.5 rounded-2xl pixel-font text-xl text-emerald-400 shrink-0 shadow-lg">
     <div>ĐIỂM: <span id="score-text" class="text-white drop-shadow">0</span></div>
     <div>WAVE: <span id="wave-text" class="text-amber-300 font-bold">1</span></div>
@@ -68,17 +64,17 @@
     <div id="hp-text" class="text-rose-400 tracking-wider">❤️❤️❤️</div>
   </div>
 
-  <!-- KHUNG MÀN HÌNH CHƠI CHÍNH 320x460 -->
-  <div class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 arcade-glow bg-slate-950 flex items-center justify-center">
+  <!-- KHUNG MÀN HÌNH CHƠI 320x460 -->
+  <div class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
     
     <div id="mobile-guide" class="absolute bottom-3 text-slate-400/70 text-[10px] pointer-events-none transition-opacity uppercase tracking-wider font-semibold">
-      ← Kéo ngón tay qua lại để xả đạn →
+      ← Kéo ngón tay qua lại để diệt khuẩn →
     </div>
   </div>
 
   <script>
-    // --- 1. ÂM THANH RETRO CHIPTUNE ---
+    // --- 1. ÂM THANH CHIPTUNE ---
     const AudioEngine = {
       ctx: null,
       init() {
@@ -104,21 +100,22 @@
         } catch (e) {}
       },
       shoot(lvl = 1) { 
-        this.beep(lvl === 1 ? 750 : (lvl === 2 ? 880 : 1050), 0.04, 'sawtooth', 0.04); 
+        const freqs = [750, 880, 1020, 1180, 1350];
+        this.beep(freqs[lvl - 1] || 750, 0.04, 'sawtooth', 0.04); 
       },
-      hit() { this.beep(280, 0.04, 'square', 0.04); },
+      hit() { this.beep(280, 0.03, 'sine', 0.03); },
       explode() { this.beep(85, 0.22, 'sawtooth', 0.1); },
-      bossRoar() { this.beep(65, 0.45, 'sawtooth', 0.16); },
+      bossRoar() { this.beep(60, 0.5, 'sawtooth', 0.18); },
       powerUp() {
         this.beep(523, 0.08); setTimeout(() => this.beep(659, 0.08), 80); setTimeout(() => this.beep(1046, 0.2), 160);
       },
+      shieldAbsorb() { this.beep(950, 0.08, 'sine', 0.08); },
       hurt() { this.beep(120, 0.25, 'sawtooth', 0.12); }
     };
 
     // --- 2. GAME STATE & SETUP ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
 
     let score = 0;
     let hp = 3;
@@ -130,8 +127,9 @@
       y: 400,
       w: 30,
       h: 36,
-      gunLevel: 1,
+      gunLevel: 1, // 5 Cấp độ đạn
       invincibleTime: 0,
+      shieldTime: 0, // Đếm ngược hào quang miễn dịch
       shootCooldown: 0,
       targetX: 145
     };
@@ -142,26 +140,28 @@
     let enemies = [];
     let powerUps = [];
     let particles = [];
-    let bloodCells = []; // Hạt hồng cầu trôi lơ lửng tạo chiều sâu 2D
+    let shockwaves = []; // Vòng hào quang bung tỏa khi rơi vắc-xin
+    let bloodCells = [];
     let boss = null;
 
-    // Khởi tạo nền hồng cầu parallax
-    for (let i = 0; i < 12; i++) {
+    // Nền hồng cầu Parallax trôi êm ái
+    for (let i = 0; i < 14; i++) {
       bloodCells.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: 8 + Math.random() * 12,
+        radius: 8 + Math.random() * 14,
         speed: 0.2 + Math.random() * 0.4,
         alpha: 0.15 + Math.random() * 0.2
       });
     }
 
+    // 5 Chủng loại mầm bệnh hữu cơ
     const ENEMY_TYPES = [
-      { type: 'bacteria', hp: 1, color: '#22c55e', score: 10, w: 22, h: 22, canShoot: false },
-      { type: 'virus',    hp: 3, color: '#ef4444', score: 35, w: 24, h: 24, canShoot: true },
-      { type: 'cholera',  hp: 1, color: '#eab308', score: 15, w: 18, h: 20, canShoot: true },
-      { type: 'mosquito', hp: 2, color: '#f97316', score: 25, w: 22, h: 22, canShoot: false },
-      { type: 'superbug', hp: 4, color: '#a855f7', score: 50, w: 26, h: 26, canShoot: true }
+      { type: 'amoeba',   hp: 1, color: '#4ade80', score: 10, radius: 11, canShoot: false }, // Amip xanh co bóp
+      { type: 'corona',   hp: 3, color: '#f87171', score: 35, radius: 13, canShoot: true },  // Virus gai tròn mềm
+      { type: 'vibrio',   hp: 1, color: '#facc15', score: 15, radius: 10, canShoot: true },  // Phẩy khuẩn uốn lượn
+      { type: 'parasite', hp: 2, color: '#fb923c', score: 25, radius: 12, canShoot: false }, // Ký sinh trùng có đuôi
+      { type: 'superbug', hp: 4, color: '#c084fc', score: 50, radius: 14, canShoot: true }   // Siêu vi kháng thuốc
     ];
 
     function spawnWave() {
@@ -170,9 +170,9 @@
 
       if (wave % 3 === 0) {
         AudioEngine.bossRoar();
-        const bossHp = 35 + (wave - 3) * 15;
+        const bossHp = 40 + (wave - 3) * 18;
         boss = {
-          x: 125, y: 45, w: 70, h: 54,
+          x: 125, y: 55, radius: 32,
           hp: bossHp, maxHp: bossHp,
           vx: 1.5, shootCooldown: 50, animTimer: 0
         };
@@ -190,9 +190,9 @@
           else type = ENEMY_TYPES[2];
 
           enemies.push({
-            x: 22 + c * 46,
-            y: 35 + r * 34,
-            w: type.w, h: type.h,
+            x: 24 + c * 46,
+            y: 35 + r * 36,
+            radius: type.radius,
             hp: type.hp, maxHp: type.hp,
             color: type.color, score: type.score,
             type: type.type, canShoot: type.canShoot,
@@ -205,192 +205,305 @@
     let enemyDir = 1;
     let enemySpeedX = 0.7;
 
-    // --- 3. ĐỒ HỌA 2D NÂNG CẤP (SHADING & GLOW) ---
-    function drawPixelRect(x, y, w, h, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(Math.round(x), Math.round(y), w, h);
+    // --- 3. ĐỒ HỌA HỮU CƠ MƯỢT MÀ (ORGANIC 2D RENDERING) ---
+
+    // 1. Amip tế bào mềm (Blob co bóp)
+    function drawAmoeba(e) {
+      e.animTimer += 0.05;
+      const t = e.animTimer;
+      ctx.fillStyle = e.color;
+      ctx.beginPath();
+      for (let i = 0; i < Math.PI * 2; i += 0.4) {
+        const offset = Math.sin(t * 3 + i * 4) * 2.5;
+        const r = e.radius + offset;
+        const px = e.x + Math.cos(i) * r;
+        const py = e.y + Math.sin(i) * r;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Nhân tế bào phản quang
+      ctx.fillStyle = '#166534';
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, 4, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    // Bác sĩ với bóng đổ, áo blouse đa sắc, ống tiêm phát sáng
-    function drawPlayer(x, y) {
-      if (player.invincibleTime > 0 && Math.floor(player.invincibleTime / 4) % 2 === 0) return;
+    // 2. Virus Corona gai tròn mềm mại
+    function drawCorona(e) {
+      e.animTimer += 0.04;
+      const t = e.animTimer;
 
-      // Bóng đổ dưới chân
+      // Xung quanh là các gai gai đầu tròn nhấp nhô
+      const spikeCount = 8;
+      ctx.fillStyle = '#dc2626';
+      for (let i = 0; i < spikeCount; i++) {
+        const ang = (i / spikeCount) * Math.PI * 2 + t;
+        const len = e.radius + 4 + Math.sin(t * 4 + i) * 2;
+        const sx = e.x + Math.cos(ang) * len;
+        const sy = e.y + Math.sin(ang) * len;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Thân chính hình cầu 3D
+      const grad = ctx.createRadialGradient(e.x - 3, e.y - 3, 2, e.x, e.y, e.radius);
+      grad.addColorStop(0, '#f87171');
+      grad.addColorStop(1, '#b91c1c');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mắt quỷ hung dữ
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(e.x - 4, e.y - 1, 2.5, 0, Math.PI * 2);
+      ctx.arc(e.x + 4, e.y - 1, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(e.x - 4, e.y - 1, 1, 0, Math.PI * 2);
+      ctx.arc(e.x + 4, e.y - 1, 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 3. Phẩy khuẩn uốn lượn có đuôi bơi
+    function drawVibrio(e) {
+      e.animTimer += 0.06;
+      const t = e.animTimer;
+      ctx.fillStyle = e.color;
+
+      // Thân hình hạt đậu uốn cong
+      ctx.beginPath();
+      ctx.ellipse(e.x, e.y, e.radius, e.radius * 0.65, Math.sin(t * 2) * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Đuôi roi Flagella bơi mềm mại
+      ctx.strokeStyle = '#ca8a04';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(e.x - e.radius + 2, e.y);
+      ctx.quadraticCurveTo(e.x - e.radius - 8, e.y + Math.sin(t * 6) * 7, e.x - e.radius - 14, e.y + Math.cos(t * 6) * 5);
+      ctx.stroke();
+
+      // Mắt nhỏ
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(e.x + 3, e.y - 2, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 4. Ký sinh trùng đa lông mao
+    function drawParasite(e) {
+      e.animTimer += 0.05;
+      const t = e.animTimer;
+      ctx.fillStyle = e.color;
+
+      ctx.beginPath();
+      ctx.ellipse(e.x, e.y, e.radius * 0.8, e.radius * 1.1, Math.sin(t) * 0.15, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cặp râu cảm biến uốn lượn
+      ctx.strokeStyle = '#ea580c';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(e.x - 4, e.y + e.radius);
+      ctx.quadraticCurveTo(e.x - 7, e.y + e.radius + 6 + Math.sin(t * 5) * 3, e.x - 10, e.y + e.radius + 10);
+      ctx.moveTo(e.x + 4, e.y + e.radius);
+      ctx.quadraticCurveTo(e.x + 7, e.y + e.radius + 6 - Math.sin(t * 5) * 3, e.x + 10, e.y + e.radius + 10);
+      ctx.stroke();
+    }
+
+    // 5. Siêu vi kháng thuốc (Superbug có hào quang tím)
+    function drawSuperbug(e) {
+      e.animTimer += 0.04;
+      const t = e.animTimer;
+
+      // Hào quang khiên năng lượng dạng sóng mượt
+      ctx.strokeStyle = 'rgba(216, 180, 254, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.radius + 5 + Math.sin(t * 4) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Thân đa giác bo tròn
+      const grad = ctx.createRadialGradient(e.x, e.y, 2, e.x, e.y, e.radius);
+      grad.addColorStop(0, '#e9d5ff');
+      grad.addColorStop(1, '#7e22ce');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Lõi nhiễm sắc thể
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Mega Boss Tế Bào Mẹ Khổng Lồ
+    function drawBoss(b) {
+      b.animTimer += 0.03;
+      const t = b.animTimer;
+
+      // Bóng đổ
       ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
       ctx.beginPath();
-      ctx.ellipse(x + 14, y + 36, 14, 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(b.x, b.y + b.radius + 8, b.radius * 1.1, 8, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Mũ chữ thập đỏ
-      drawPixelRect(x + 9, y, 12, 8, '#ffffff');
-      drawPixelRect(x + 9, y + 7, 12, 1, '#cbd5e1'); // Đổ bóng viền mũ
-      drawPixelRect(x + 13, y + 2, 4, 2, '#ef4444');
-      drawPixelRect(x + 14, y + 1, 2, 4, '#ef4444');
-
-      // Mặt & mắt
-      drawPixelRect(x + 9, y + 8, 12, 6, '#fed7aa');
-      drawPixelRect(x + 11, y + 10, 2, 2, '#0f172a');
-      drawPixelRect(x + 17, y + 10, 2, 2, '#0f172a');
-
-      // Áo blouse có đổ bóng mảng sáng/tối
-      drawPixelRect(x + 7, y + 14, 16, 14, '#ffffff');
-      drawPixelRect(x + 7, y + 24, 16, 4, '#cbd5e1'); // Bóng vạt áo
-      drawPixelRect(x + 12, y + 14, 6, 14, '#0ea5e9'); // Khăn y tế
-
-      // Quần xanh y tế
-      drawPixelRect(x + 7, y + 28, 6, 7, '#0369a1');
-      drawPixelRect(x + 17, y + 28, 6, 7, '#0369a1');
-
-      // Ống tiêm phát sáng huỳnh quang
-      const liquidColor = player.gunLevel === 1 ? '#38bdf8' : (player.gunLevel === 2 ? '#facc15' : '#c084fc');
-      
-      // Hào quang ống tiêm
-      ctx.shadowColor = liquidColor;
-      ctx.shadowBlur = 8;
-      drawPixelRect(x + 23, y - 8, 3, 11, '#e2e8f0'); // Mũi kim kim loại sáng
-      drawPixelRect(x + 21, y + 3, 7, 18, liquidColor); // Thân thuốc
-      ctx.shadowBlur = 0; // Tắt glow cho các chi tiết khác
-
-      drawPixelRect(x + 23, y + 7, 3, 7, 'rgba(255,255,255,0.8)'); // Vạch phản quang thủy tinh
-    }
-
-    // Vi khuẩn có mắt cử động, xúc tu mềm, hiệu ứng phát sáng
-    function drawEnemy(e) {
-      e.animTimer += 0.05;
-      const wobble = Math.sin(e.animTimer) * 2.5;
-
-      if (e.type === 'virus') {
-        // Virus gai đỏ: Có quầng sáng nhẹ
-        ctx.shadowColor = 'rgba(239, 68, 68, 0.4)';
-        ctx.shadowBlur = 6;
-        drawPixelRect(e.x + 3, e.y + 3, 18, 18, '#dc2626');
-        drawPixelRect(e.x + 5, e.y + 5, 14, 14, '#ef4444');
-        ctx.shadowBlur = 0;
-
-        // Gai độc nhấp nhô
-        drawPixelRect(e.x + 10, e.y - 3 + wobble * 0.5, 4, 5, '#b91c1c');
-        drawPixelRect(e.x + 10, e.y + 22 - wobble * 0.5, 4, 5, '#b91c1c');
-        drawPixelRect(e.x - 3 + wobble * 0.5, e.y + 10, 5, 4, '#b91c1c');
-        drawPixelRect(e.x + 22 - wobble * 0.5, e.y + 10, 5, 4, '#b91c1c');
-
-        // Mắt quỷ
-        drawPixelRect(e.x + 6, e.y + 8, 3, 4, '#000000');
-        drawPixelRect(e.x + 15, e.y + 8, 3, 4, '#000000');
-        drawPixelRect(e.x + 7, e.y + 9, 1, 1, '#fef08a');
-        drawPixelRect(e.x + 16, e.y + 9, 1, 1, '#fef08a');
-      } else if (e.type === 'superbug') {
-        // Vi khuẩn kháng thuốc tím có khiên năng lượng 2D
-        ctx.shadowColor = '#c084fc';
-        ctx.shadowBlur = 8;
-        drawPixelRect(e.x + 2, e.y + 2, 22, 22, '#9333ea');
-        drawPixelRect(e.x + 4, e.y + 4, 18, 18, '#c084fc');
-        ctx.shadowBlur = 0;
-
-        drawPixelRect(e.x + 6, e.y + 7, 4, 4, '#ffffff');
-        drawPixelRect(e.x + 16, e.y + 7, 4, 4, '#ffffff');
-        drawPixelRect(e.x + 8, e.y + 8, 2, 2, '#581c87');
-        drawPixelRect(e.x + 18, e.y + 8, 2, 2, '#581c87');
-
-        // Vòng khiên bảo vệ chớp nháy
-        ctx.strokeStyle = (Math.floor(e.animTimer * 5) % 2 === 0) ? '#e9d5ff' : 'transparent';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(e.x - 2, e.y - 2, 30, 30);
-      } else if (e.type === 'mosquito') {
-        // Muỗi sốt xuất huyết vẫy cánh mượt mà
-        drawPixelRect(e.x + 9, e.y + 4, 4, 13, '#c2410c');
-        drawPixelRect(e.x + 10, e.y + 5, 2, 11, '#fed7aa'); // Vằn trắng trên thân
-
-        const wingY = wobble > 0 ? -1 : 3;
-        // Cánh trong suốt
-        ctx.fillStyle = 'rgba(147, 197, 253, 0.75)';
-        ctx.fillRect(e.x + 1, e.y + wingY, 8, 4);
-        ctx.fillRect(e.x + 13, e.y + wingY, 8, 4);
-
-        drawPixelRect(e.x + 10, e.y + 17, 2, 5, '#ffffff'); // Vòi chích
-      } else if (e.type === 'cholera') {
-        // Phẩy khuẩn tả uốn lượn
-        drawPixelRect(e.x + 3, e.y + wobble, 12, 14, '#ca8a04');
-        drawPixelRect(e.x + 5, e.y + 2 + wobble, 8, 10, '#facc15');
-        drawPixelRect(e.x + 9, e.y + 14 + wobble, 6, 6, '#ca8a04');
-        drawPixelRect(e.x + 6, e.y + 5 + wobble, 2, 2, '#000');
-      } else {
-        // Trực khuẩn xanh nguyên bản: Co bóp màng sinh học
-        drawPixelRect(e.x + 2, e.y + wobble, 18, 18, '#15803d');
-        drawPixelRect(e.x + 4, e.y + 2 + wobble, 14, 14, '#22c55e');
-        drawPixelRect(e.x + 6, e.y + 6 + wobble, 3, 4, '#14532d');
-        drawPixelRect(e.x + 13, e.y + 6 + wobble, 3, 4, '#14532d');
-      }
-    }
-
-    // Mega Boss 2D hầm hố: Chi tiết cơ bắp quái vật, xúc tu phát xung, mắt quỷ
-    function drawBoss(b) {
-      b.animTimer += 0.04;
-      const wobble = Math.sin(b.animTimer) * 3;
-
-      // Bóng đổ trùm
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      // Màng sinh chất khổng lồ uốn lượn hữu cơ
+      ctx.fillStyle = '#581c87';
       ctx.beginPath();
-      ctx.ellipse(b.x + b.w / 2, b.y + b.h + 10, b.w / 2 + 5, 8, 0, 0, Math.PI * 2);
+      for (let i = 0; i < Math.PI * 2; i += 0.25) {
+        const offset = Math.sin(t * 3 + i * 5) * 4;
+        const r = b.radius + offset;
+        const px = b.x + Math.cos(i) * r;
+        const py = b.y + Math.sin(i) * r;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
       ctx.fill();
 
-      // Thân Boss: Phối màu tím đậm và hồng neon
-      ctx.shadowColor = 'rgba(168, 85, 247, 0.5)';
-      ctx.shadowBlur = 12;
-      drawPixelRect(b.x + 8, b.y + wobble, b.w - 16, b.h, '#581c87');
-      drawPixelRect(b.x + 4, b.y + 8 + wobble, b.w - 8, b.h - 16, '#7e22ce');
-      drawPixelRect(b.x + 10, b.y + 12 + wobble, b.w - 20, b.h - 24, '#a855f7');
-      ctx.shadowBlur = 0;
+      // Lớp tế bào chất hồng neon bên trong
+      const grad = ctx.createRadialGradient(b.x - 8, b.y - 8, 5, b.x, b.y, b.radius * 0.8);
+      grad.addColorStop(0, '#f472b6');
+      grad.addColorStop(1, '#9333ea');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius * 0.75, 0, Math.PI * 2);
+      ctx.fill();
 
-      // 4 Xúc tu gai phát quang co bóp
-      drawPixelRect(b.x + 12, b.y - 7 + wobble, 7, 9, '#ec4899');
-      drawPixelRect(b.x + b.w - 19, b.y - 7 + wobble, 7, 9, '#ec4899');
-      drawPixelRect(b.x - 7, b.y + 18 + wobble, 9, 9, '#ec4899');
-      drawPixelRect(b.x + b.w - 2, b.y + 18 + wobble, 9, 9, '#ec4899');
+      // Cặp mắt quỷ to phát sáng
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(b.x - 12, b.y - 4, 6, 0, Math.PI * 2);
+      ctx.arc(b.x + 12, b.y - 4, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.arc(b.x - 12, b.y - 4, 2.5, 0, Math.PI * 2);
+      ctx.arc(b.x + 12, b.y - 4, 2.5, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Mắt quỷ to đỏ phát sáng
-      ctx.shadowColor = '#ef4444';
-      ctx.shadowBlur = 8;
-      drawPixelRect(b.x + 16, b.y + 14 + wobble, 10, 10, '#ef4444');
-      drawPixelRect(b.x + b.w - 26, b.y + 14 + wobble, 10, 10, '#ef4444');
-      ctx.shadowBlur = 0;
+      // Miệng cười nham nhở
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y + 10, 14, 0.2, Math.PI - 0.2);
+      ctx.stroke();
 
-      // Đồng tử mắt
-      drawPixelRect(b.x + 19, b.y + 17 + wobble, 4, 4, '#fef08a');
-      drawPixelRect(b.x + b.w - 23, b.y + 17 + wobble, 4, 4, '#fef08a');
-
-      // Miệng nham nhở răng sắc nhọn
-      drawPixelRect(b.x + 18, b.y + 34 + wobble, 34, 8, '#09090b');
-      drawPixelRect(b.x + 21, b.y + 34 + wobble, 5, 4, '#ffffff');
-      drawPixelRect(b.x + 32, b.y + 34 + wobble, 5, 4, '#ffffff');
-      drawPixelRect(b.x + 43, b.y + 34 + wobble, 5, 4, '#ffffff');
-
-      // Thanh máu Boss có viền sáng neon
-      const barW = 85;
-      const barX = b.x + (b.w - barW) / 2;
-      const barY = b.y - 15;
-      drawPixelRect(barX - 1, barY - 1, barW + 2, 7, '#020617');
-      drawPixelRect(barX, barY, barW, 5, '#334155');
+      // Thanh máu của Boss
+      const barW = 80;
+      const barX = b.x - barW / 2;
+      const barY = b.y - b.radius - 14;
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(barX, barY, barW, 5);
       const curHpW = Math.max(0, (b.hp / b.maxHp) * barW);
       ctx.fillStyle = '#ef4444';
       ctx.fillRect(barX, barY, curHpW, 5);
-      ctx.fillStyle = '#fca5a5';
-      ctx.fillRect(barX, barY, curHpW, 1.5); // Sọc sáng mặt trên thanh máu
     }
 
-    // Lọ thuốc bổ phát sáng xoay tròn
+    // Bác sĩ & Hào Quang Miễn Dịch (Immunity Halo Shield)
+    function drawPlayer(x, y) {
+      if (player.invincibleTime > 0 && Math.floor(player.invincibleTime / 4) % 2 === 0) return;
+
+      // VÒNG HÀO QUANG MIỄN DỊCH QUAY QUANH BÁC SĨ (KHI NHẶT VẮC-XIN)
+      if (player.shieldTime > 0) {
+        const shieldAngle = Date.now() * 0.005;
+        const gradShield = ctx.createRadialGradient(x + 15, y + 18, 16, x + 15, y + 18, 32);
+        gradShield.addColorStop(0, 'rgba(56, 189, 248, 0.1)');
+        gradShield.addColorStop(0.8, 'rgba(56, 189, 248, 0.45)');
+        gradShield.addColorStop(1, 'rgba(255, 255, 255, 0.9)');
+
+        ctx.fillStyle = gradShield;
+        ctx.beginPath();
+        ctx.arc(x + 15, y + 18, 30, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3 Viên ngọc kháng thể bay quanh bảo vệ
+        for (let i = 0; i < 3; i++) {
+          const a = shieldAngle + (i * Math.PI * 2 / 3);
+          const ox = x + 15 + Math.cos(a) * 32;
+          const oy = y + 18 + Math.sin(a) * 32;
+          ctx.fillStyle = '#38bdf8';
+          ctx.beginPath();
+          ctx.arc(ox, oy, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Bóng đổ
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(x + 15, y + 36, 14, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Mũ chữ thập
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(x + 9, y, 12, 8, 3);
+      ctx.fill();
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(x + 13, y + 2, 4, 2);
+      ctx.fillRect(x + 14, y + 1, 2, 4);
+
+      // Mặt
+      ctx.fillStyle = '#fed7aa';
+      ctx.beginPath();
+      ctx.roundRect(x + 9, y + 8, 12, 6, 2);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(x + 11, y + 10, 2, 2);
+      ctx.fillRect(x + 17, y + 10, 2, 2);
+
+      // Áo Blouse
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(x + 7, y + 14, 16, 14, 3);
+      ctx.fill();
+      ctx.fillStyle = '#0ea5e9';
+      ctx.fillRect(x + 12, y + 14, 6, 14);
+
+      // Quần
+      ctx.fillStyle = '#0369a1';
+      ctx.fillRect(x + 7, y + 28, 6, 7);
+      ctx.fillRect(x + 17, y + 28, 6, 7);
+
+      // Ống tiêm phát sáng theo cấp đạn
+      const gunColors = ['#38bdf8', '#facc15', '#c084fc', '#4ade80', '#f43f5e'];
+      const curGunColor = gunColors[player.gunLevel - 1] || '#38bdf8';
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillRect(x + 23, y - 8, 3, 11);
+      ctx.fillStyle = curGunColor;
+      ctx.beginPath();
+      ctx.roundRect(x + 21, y + 3, 7, 18, 2);
+      ctx.fill();
+    }
+
+    // Vẽ lọ vắc-xin rớt xuống
     function drawPowerUp(p) {
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 10;
-      drawPixelRect(p.x + 2, p.y + 4, 12, 14, '#ffffff');
-      drawPixelRect(p.x + 3, p.y + 5, 10, 12, p.color);
-      ctx.shadowBlur = 0;
-
-      drawPixelRect(p.x + 4, p.y, 8, 4, '#f59e0b');
-      drawPixelRect(p.x + 7, p.y + 8, 2, 6, '#ffffff');
-      drawPixelRect(p.x + 5, p.y + 10, 6, 2, '#ffffff');
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(p.x + 2, p.y + 4, 12, 14, 2);
+      ctx.fill();
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x + 3, p.y + 5, 10, 12);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(p.x + 4, p.y, 8, 4);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(p.x + 7, p.y + 8, 2, 6);
+      ctx.fillRect(p.x + 5, p.y + 10, 6, 2);
     }
 
-    // --- 4. BẮN & NỔ ---
+    // --- 4. KHO ĐẠN DƯỢC 5 CẤP ĐỘ ---
     function shootBullet() {
       if (player.shootCooldown > 0) return;
       AudioEngine.shoot(player.gunLevel);
@@ -399,17 +512,33 @@
       const py = player.y - 8;
 
       if (player.gunLevel === 1) {
+        // Cấp 1: Tia đơn chuẩn
         bullets.push({ x: px, y: py, vx: 0, vy: -8, color: '#38bdf8' });
       } else if (player.gunLevel === 2) {
+        // Cấp 2: Đạn đôi song song
         bullets.push({ x: px - 6, y: py, vx: 0, vy: -8.5, color: '#facc15' });
         bullets.push({ x: px + 6, y: py, vx: 0, vy: -8.5, color: '#facc15' });
-      } else {
+      } else if (player.gunLevel === 3) {
+        // Cấp 3: Đạn 3 tia quạt
         bullets.push({ x: px, y: py, vx: 0, vy: -9, color: '#c084fc' });
-        bullets.push({ x: px - 4, y: py, vx: -1.8, vy: -8.5, color: '#c084fc' });
-        bullets.push({ x: px + 4, y: py, vx: 1.8, vy: -8.5, color: '#c084fc' });
+        bullets.push({ x: px - 4, y: py, vx: -1.6, vy: -8.5, color: '#c084fc' });
+        bullets.push({ x: px + 4, y: py, vx: 1.6, vy: -8.5, color: '#c084fc' });
+      } else if (player.gunLevel === 4) {
+        // Cấp 4: Đạn 4 chùm xoáy
+        bullets.push({ x: px - 8, y: py, vx: -0.8, vy: -9.5, color: '#4ade80' });
+        bullets.push({ x: px - 2, y: py, vx: -0.2, vy: -9.5, color: '#4ade80' });
+        bullets.push({ x: px + 2, y: py, vx: 0.2, vy: -9.5, color: '#4ade80' });
+        bullets.push({ x: px + 8, y: py, vx: 0.8, vy: -9.5, color: '#4ade80' });
+      } else {
+        // Cấp 5 (Max): 5 chùm đạn Plasma CAR-T xuyên phá
+        bullets.push({ x: px, y: py, vx: 0, vy: -10, color: '#f43f5e' });
+        bullets.push({ x: px - 5, y: py, vx: -1.4, vy: -9.5, color: '#fb923c' });
+        bullets.push({ x: px + 5, y: py, vx: 1.4, vy: -9.5, color: '#fb923c' });
+        bullets.push({ x: px - 10, y: py, vx: -2.8, vy: -9, color: '#facc15' });
+        bullets.push({ x: px + 10, y: py, vx: 2.8, vy: -9, color: '#facc15' });
       }
 
-      player.shootCooldown = 11;
+      player.shootCooldown = 10;
     }
 
     function createExplosion(x, y, color, count = 10) {
@@ -424,7 +553,14 @@
       }
     }
 
-    // --- 5. GAME LOOP ENGINE ---
+    // Kích hoạt vòng hào quang bung tỏa khi vắc-xin xuất hiện
+    function createImmunityShockwave(x, y) {
+      shockwaves.push({
+        x: x, y: y, radius: 5, maxRadius: 65, alpha: 1.0
+      });
+    }
+
+    // --- 5. VÒNG LẶP ENGINE ---
     function update() {
       if (isGameOver) return;
 
@@ -434,8 +570,9 @@
       if (isTouching) shootBullet();
       if (player.shootCooldown > 0) player.shootCooldown--;
       if (player.invincibleTime > 0) player.invincibleTime--;
+      if (player.shieldTime > 0) player.shieldTime--;
 
-      // 1. Cập nhật nền tế bào máu Parallax
+      // 1. Hồng cầu nền
       for (let cell of bloodCells) {
         cell.y += cell.speed;
         if (cell.y > canvas.height + cell.radius) {
@@ -444,7 +581,15 @@
         }
       }
 
-      // 2. Cập nhật đạn người chơi
+      // 2. Vòng hào quang bung tỏa
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        const sw = shockwaves[i];
+        sw.radius += 2.2;
+        sw.alpha -= 0.035;
+        if (sw.alpha <= 0) shockwaves.splice(i, 1);
+      }
+
+      // 3. Đạn người chơi
       for (let i = bullets.length - 1; i >= 0; i--) {
         const b = bullets[i];
         b.x += b.vx;
@@ -455,8 +600,8 @@
           continue;
         }
 
-        // Bắn trúng Boss
-        if (boss && b.x < boss.x + boss.w && b.x + 3 > boss.x && b.y < boss.y + boss.h && b.y + 12 > boss.y) {
+        // Đạn trúng Boss
+        if (boss && Math.hypot(b.x - boss.x, b.y - boss.y) < boss.radius + 6) {
           boss.hp--;
           AudioEngine.hit();
           createExplosion(b.x, b.y, '#f43f5e', 2);
@@ -464,42 +609,43 @@
 
           if (boss.hp <= 0) {
             AudioEngine.explode();
-            createExplosion(boss.x + boss.w / 2, boss.y + boss.h / 2, '#a855f7', 40);
+            createExplosion(boss.x, boss.y, '#a855f7', 40);
             score += 300;
             document.getElementById('score-text').innerText = score;
 
+            // Rơi vắc-xin + bung hào quang
             powerUps.push({
-              x: boss.x + boss.w / 2 - 8,
-              y: boss.y + boss.h / 2,
+              x: boss.x - 8, y: boss.y,
               w: 16, h: 18, vy: 1.4, color: '#facc15'
             });
+            createImmunityShockwave(boss.x, boss.y);
 
             boss = null;
           }
           continue;
         }
 
-        // Bắn trúng vi khuẩn thường
+        // Đạn trúng vi khuẩn thường
         for (let j = enemies.length - 1; j >= 0; j--) {
           const e = enemies[j];
-          if (b.x < e.x + e.w && b.x + 3 > e.x && b.y < e.y + e.h && b.y + 12 > e.y) {
+          if (Math.hypot(b.x - e.x, b.y - e.y) < e.radius + 5) {
             e.hp--;
             AudioEngine.hit();
             bullets.splice(i, 1);
 
             if (e.hp <= 0) {
               AudioEngine.explode();
-              createExplosion(e.x + e.w / 2, e.y + e.h / 2, e.color, 14);
+              createExplosion(e.x, e.y, e.color, 14);
               score += e.score;
               document.getElementById('score-text').innerText = score;
 
-              // Tỷ lệ 5% rơi thuốc bổ
-              if (Math.random() < 0.05 && (e.type === 'virus' || e.type === 'superbug')) {
+              // Tỷ lệ 5% rơi vắc-xin
+              if (Math.random() < 0.05 && (e.type === 'corona' || e.type === 'superbug')) {
                 powerUps.push({
-                  x: e.x + e.w / 2 - 8,
-                  y: e.y,
+                  x: e.x - 8, y: e.y,
                   w: 16, h: 18, vy: 1.4, color: '#38bdf8'
                 });
+                createImmunityShockwave(e.x, e.y);
               }
 
               enemies.splice(j, 1);
@@ -509,28 +655,27 @@
         }
       }
 
-      // 3. Logic Boss Tấn Công
+      // 4. Boss tấn công
       if (boss) {
         boss.x += boss.vx;
-        if (boss.x < 15 || boss.x > canvas.width - boss.w - 15) boss.vx *= -1;
+        if (boss.x < 35 || boss.x > canvas.width - 35) boss.vx *= -1;
 
         boss.shootCooldown--;
         if (boss.shootCooldown <= 0) {
           boss.shootCooldown = 45;
-          enemyBullets.push({ x: boss.x + boss.w / 2, y: boss.y + boss.h, w: 6, h: 10, vx: 0, vy: 3.2 });
-          enemyBullets.push({ x: boss.x + boss.w / 2, y: boss.y + boss.h, w: 6, h: 10, vx: -1.3, vy: 3.0 });
-          enemyBullets.push({ x: boss.x + boss.w / 2, y: boss.y + boss.h, w: 6, h: 10, vx: 1.3, vy: 3.0 });
+          enemyBullets.push({ x: boss.x, y: boss.y + boss.radius, w: 6, h: 10, vx: 0, vy: 3.2 });
+          enemyBullets.push({ x: boss.x, y: boss.y + boss.radius, w: 6, h: 10, vx: -1.3, vy: 3.0 });
+          enemyBullets.push({ x: boss.x, y: boss.y + boss.radius, w: 6, h: 10, vx: 1.3, vy: 3.0 });
         }
       }
 
-      // 4. Vi khuẩn thường nhả giọt độc
+      // 5. Vi khuẩn nhả giọt độc
       if (!boss && Math.random() < 0.03 && enemies.length > 0) {
         const shooters = enemies.filter(en => en.canShoot);
         if (shooters.length > 0) {
           const s = shooters[Math.floor(Math.random() * shooters.length)];
           enemyBullets.push({
-            x: s.x + s.w / 2 - 2,
-            y: s.y + s.h,
+            x: s.x, y: s.y + s.radius,
             w: 5, h: 9, vx: 0,
             vy: 2.8 + wave * 0.15
           });
@@ -543,6 +688,15 @@
         eb.x += eb.vx || 0;
         eb.y += eb.vy;
 
+        // Nếu bác sĩ ĐANG CÓ HÀO QUANG MIỄN DỊCH -> Đẩy lùi/hóa giải độc tố
+        if (player.shieldTime > 0 && Math.hypot(eb.x - (player.x + 15), eb.y - (player.y + 18)) < 34) {
+          AudioEngine.shieldAbsorb();
+          createExplosion(eb.x, eb.y, '#38bdf8', 4);
+          enemyBullets.splice(i, 1);
+          continue;
+        }
+
+        // Bị dính độc thông thường
         if (player.invincibleTime <= 0 &&
             eb.x < player.x + player.w && eb.x + eb.w > player.x &&
             eb.y < player.y + player.h && eb.y + eb.h > player.y) {
@@ -554,7 +708,7 @@
         if (eb.y > canvas.height + 10) enemyBullets.splice(i, 1);
       }
 
-      // 5. Cập nhật Lọ Thuốc Bổ rơi
+      // 6. Nhặt lọ vắc-xin (Kích hoạt đạn mới + Hào quang)
       for (let i = powerUps.length - 1; i >= 0; i--) {
         const pu = powerUps[i];
         pu.y += pu.vy;
@@ -564,11 +718,15 @@
           AudioEngine.powerUp();
           powerUps.splice(i, 1);
 
-          if (player.gunLevel < 3) {
+          // BẬT KHIÊN HÀO QUANG MIỄN DỊCH TRONG 5 GIÂY (300 frames)
+          player.shieldTime = 300;
+
+          if (player.gunLevel < 5) {
             player.gunLevel++;
-            const labels = ["CẤP 1", "ĐẠN ĐÔI", "ĐẠN XÒE 3"];
+            const labels = ["CẤP 1", "ĐẠN ĐÔI", "ĐẠN XÒE 3", "4 TIA XOÁY", "CAR-T MAX"];
             document.getElementById('gun-text').innerText = labels[player.gunLevel - 1];
-            document.getElementById('gun-text').className = player.gunLevel === 2 ? "text-amber-300 font-bold" : "text-fuchsia-400 font-bold";
+            const colors = ["text-sky-300", "text-amber-300", "text-fuchsia-400", "text-emerald-400", "text-rose-400"];
+            document.getElementById('gun-text').className = `${colors[player.gunLevel - 1]} font-bold`;
           } else {
             if (hp < 3) {
               hp++;
@@ -581,12 +739,12 @@
         if (pu.y > canvas.height + 20) powerUps.splice(i, 1);
       }
 
-      // 6. Vi khuẩn dàn trận lướt ngang
+      // 7. Di chuyển đàn vi khuẩn
       if (!boss) {
         let hitWall = false;
         for (let e of enemies) {
           e.x += enemyDir * enemySpeedX;
-          if (e.x < 4 || e.x > canvas.width - e.w - 4) hitWall = true;
+          if (e.x < e.radius + 2 || e.x > canvas.width - e.radius - 2) hitWall = true;
         }
 
         if (hitWall) {
@@ -602,7 +760,7 @@
         }
       }
 
-      // 7. Hạt nổ phân rã
+      // 8. Hạt nổ
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx; p.y += p.vy;
@@ -618,12 +776,11 @@
         spawnWave();
       }
 
-      // --- 6. RENDER ĐỒ HỌA RA CANVAS ---
-      // Nền buồng tiệt trùng y tế (Màu xanh sâu thẳm)
+      // --- 6. RENDER HÌNH ẢNH MƯỢT MÀ RA CANVAS ---
       ctx.fillStyle = '#02120e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Lưới quét sinh học (Bio Grid)
+      // Lưới quét sinh học
       ctx.strokeStyle = 'rgba(6, 78, 59, 0.35)';
       ctx.lineWidth = 1;
       for (let x = 0; x < canvas.width; x += 24) {
@@ -633,43 +790,65 @@
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
       }
 
-      // Vẽ hồng cầu Parallax mờ trôi bềnh bồng
+      // Hồng cầu nền
       for (let cell of bloodCells) {
         ctx.fillStyle = `rgba(239, 68, 68, ${cell.alpha})`;
         ctx.beginPath();
         ctx.arc(cell.x, cell.y, cell.radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = `rgba(185, 28, 28, ${cell.alpha * 1.3})`;
+      }
+
+      // VẼ VÒNG HÀO QUANG MIỄN DỊCH KHI VẮC-XIN RƠI (SHOCKWAVE RINGS)
+      for (let sw of shockwaves) {
+        ctx.strokeStyle = `rgba(56, 189, 248, ${sw.alpha})`;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(cell.x, cell.y, cell.radius * 0.45, 0, Math.PI * 2);
+        ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = `rgba(250, 204, 21, ${sw.alpha * 0.7})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(sw.x, sw.y, sw.radius * 0.65, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Đạn tia Laser
+      for (let b of bullets) {
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.roundRect(b.x - 1.5, b.y, 3, 14, 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(b.x - 1, b.y - 2, 2, 4);
+      }
+
+      // Giọt độc hữu cơ (Dạng giọt nước chảy tròn)
+      for (let eb of enemyBullets) {
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(eb.x, eb.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#86efac';
+        ctx.beginPath();
+        ctx.arc(eb.x, eb.y - 1, 1.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Vẽ đạn kim tiêm Neon
-      for (let b of bullets) {
-        ctx.shadowColor = b.color;
-        ctx.shadowBlur = 8;
-        ctx.fillStyle = b.color;
-        ctx.fillRect(b.x, b.y, 3, 12);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(b.x, b.y - 2, 3, 3);
-        ctx.shadowBlur = 0;
-      }
-
-      // Vẽ giọt độc tố phát sáng Neon xanh
-      for (let eb of enemyBullets) {
-        ctx.shadowColor = '#22c55e';
-        ctx.shadowBlur = 7;
-        drawPixelRect(eb.x, eb.y, eb.w, eb.h, '#22c55e');
-        drawPixelRect(eb.x + 1, eb.y + 1, eb.w - 2, eb.h - 2, '#86efac');
-        ctx.shadowBlur = 0;
-      }
-
       for (let pu of powerUps) drawPowerUp(pu);
-      for (let e of enemies) drawEnemy(e);
+
+      // Vẽ từng chủng loại mầm bệnh hữu cơ
+      for (let e of enemies) {
+        if (e.type === 'amoeba') drawAmoeba(e);
+        else if (e.type === 'corona') drawCorona(e);
+        else if (e.type === 'vibrio') drawVibrio(e);
+        else if (e.type === 'parasite') drawParasite(e);
+        else drawSuperbug(e);
+      }
+
       if (boss) drawBoss(boss);
 
-      // Vẽ các mảnh hạt nổ tròn mềm
+      // Hạt nổ phân rã tròn mịn
       for (let p of particles) {
         ctx.fillStyle = p.color;
         ctx.beginPath();
@@ -688,12 +867,12 @@
       player.invincibleTime = 60;
       if (player.gunLevel > 1) {
         player.gunLevel--;
-        const labels = ["CẤP 1", "ĐẠN ĐÔI", "ĐẠN XÒE 3"];
+        const labels = ["CẤP 1", "ĐẠN ĐÔI", "ĐẠN XÒE 3", "4 TIA XOÁY", "CAR-T MAX"];
         document.getElementById('gun-text').innerText = labels[player.gunLevel - 1];
       }
 
       document.getElementById('hp-text').innerText = '❤️'.repeat(Math.max(0, hp));
-      createExplosion(player.x + player.w / 2, player.y + player.h / 2, '#ef4444', 18);
+      createExplosion(player.x + 15, player.y + 18, '#ef4444', 18);
 
       if (hp <= 0) {
         isGameOver = true;
@@ -704,7 +883,7 @@
       }
     }
 
-    // --- 7. ĐIỀU KHIỂN CẢM ỨNG VUỐT KÉO ---
+    // --- 7. ĐIỀU KHIỂN CẢM ỨNG ---
     function updateTouchPosition(clientX) {
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
@@ -730,7 +909,6 @@
 
     window.addEventListener('touchend', () => { isTouching = false; });
 
-    // Hỗ trợ chuột và phím PC
     window.addEventListener('mousemove', (e) => {
       if (e.buttons === 1) {
         isTouching = true;
@@ -763,6 +941,7 @@
       player.gunLevel = 1;
       player.x = 145;
       player.targetX = 145;
+      player.shieldTime = 0;
       isGameOver = false;
       spawnWave();
       update();
@@ -774,10 +953,12 @@
       document.getElementById('score-text').innerText = '0';
       document.getElementById('wave-text').innerText = '1';
       document.getElementById('gun-text').innerText = 'CẤP 1';
+      document.getElementById('gun-text').className = 'text-sky-300 font-bold';
       bullets = [];
       enemyBullets = [];
       powerUps = [];
       particles = [];
+      shockwaves = [];
       startGame();
     }
   </script>
