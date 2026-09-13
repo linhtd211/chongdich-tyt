@@ -138,6 +138,9 @@
       accumulatedTime = 0;
       enemyDir = 1;
       enemySpeedX = 0.7;
+      formationShiftX = 0;
+      formationDropY = 0;
+      formationTick = 0;
       noticeTicks = 0;
       bossIntroActive = false;
       document.getElementById('boss-intro-screen').classList.add('hidden');

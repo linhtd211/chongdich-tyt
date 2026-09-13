@@ -1,7 +1,8 @@
 /* BOSS CANVAS – VẼ & HÀNH ĐỘNG.
    BOSS_TYPES (tên, họ, màu, kiểu đạn) ở 02-state.js.
    Mỗi họ hình có chuyển động riêng. Không dùng ảnh atlas nên giữ nét vẽ giống nhân vật.
-   Chiêu riêng của 12 boss nằm tại buildBossSpecial(); thời gian báo trước trong updateBoss().
+   Đường đi của boss ở 04-movement.js; chiêu riêng tại buildBossSpecial(),
+   thời gian báo trước trong updateBoss().
    Tất cả đạn đều theo cơ chế va chạm cũ, không tạo hiệu ứng mới mỗi frame. */
 
 function bossOval(x, y, rx, ry, fill, stroke = '#172033') {
@@ -288,10 +289,8 @@ function updateBoss(b, timeScale) {
     }
     return;
   }
-  // Khóa vị trí khi báo chiêu để đường đạn thực tế luôn theo đúng vạch cảnh báo.
-  if (!b.specialShots) b.x += b.vx * timeScale * (b.phase === 2 ? 1.2 : 1);
-  if (b.x < 55) { b.x = 55; b.vx = Math.abs(b.vx); }
-  else if (b.x > canvas.width - 55) { b.x = canvas.width - 55; b.vx = -Math.abs(b.vx); }
+  // Khi báo chiêu riêng, khóa cả hai trục để vạch vàng khớp đường đạn thật.
+  if (!b.specialShots) updateBossPath(b, timeScale);
   if (b.hitFlash > 0) b.hitFlash--;
   if (b.windup > 0) {
     b.windup -= timeScale;

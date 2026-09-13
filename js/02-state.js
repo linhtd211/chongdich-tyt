@@ -84,6 +84,9 @@
       enemyBullets = [];
       enemies = [];
       boss = null;
+      formationShiftX = 0;
+      formationDropY = 0;
+      formationTick = 0;
       document.getElementById('boss-attack-warning').classList.add('hidden');
 
       noticeTicks = 120; // Thông báo màn hiển thị 2 giây.
@@ -107,7 +110,7 @@
           x: 160, y: 67,
           w: 92, h: 86,
           hp: bossHp, maxHp: bossHp,
-          vx: 1.5, shootCooldown: 120, animTimer: 0
+          pathTicks: 0, shootCooldown: 120, animTimer: 0
         };
         showBossIntro(bossType, wave);
         return;
@@ -129,6 +132,8 @@
           enemies.push({
             x: 24 + c * 46,
             y: 35 + r * 36,
+            baseX: 24 + c * 46, baseY: 35 + r * 36,
+            motionPhase: c * .63 + r * 1.17, row: r,
             radius: type.radius,
             hp: type.hp, maxHp: type.hp,
             color: skin ? type.altColor : type.color, score: type.score,
@@ -141,3 +146,6 @@
 
     let enemyDir = 1;
     let enemySpeedX = 0.7;
+    let formationShiftX = 0;
+    let formationDropY = 0;
+    let formationTick = 0;

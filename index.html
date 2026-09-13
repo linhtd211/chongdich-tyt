@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.10.0 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.12.0 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=1.12.0">
 </head>
 <body class="text-white flex flex-col items-center justify-between h-full p-2">
 
@@ -15,6 +15,7 @@
     <div class="pixel-font text-4xl text-emerald-400 mb-0.5 font-bold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">
       BIỆT ĐỘI Y TẾ TYT THẠCH THẤT
     </div>
+    <p class="text-xs text-cyan-300 mb-1">v1.12.0 · Chuyển động mới</p>
     <p class="text-xs text-slate-300 mb-1">Chọn nhân vật chuyên môn</p>
     <p class="text-amber-300 text-xs mb-3">🏆 Kỷ lục: <strong id="intro-record">0</strong> điểm · Wave xa nhất: <strong id="intro-wave">0</strong></p>
 
@@ -144,6 +145,7 @@
   <!-- KHUNG GAME CANVAS (320x460) -->
   <div id="game-frame" class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
+    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.12.0</span>
     <!-- Nút cố định: pointerdown và click bàn phím gắn trong js/06-controls.js. -->
     <button id="ultimate-button" type="button"
       class="ultimate-button" aria-disabled="true" aria-label="Tuyệt kỹ chưa nạp đầy">
@@ -159,17 +161,18 @@
     </div>
   </div>
 
-  <script src="js/01-audio.js"></script>
-  <script src="js/02-state.js"></script>
-  <script src="js/03-characters.js"></script>
-  <script src="js/04-weapons-enemies.js"></script>
-  <script src="js/04-enemy-sprites.js"></script>
-  <script src="js/04-bosses.js"></script>
-  <script src="js/04-boss-intro.js"></script>
-  <script src="js/05-ultimate.js"></script>
-  <script src="js/05-results.js"></script>
-  <script src="js/05-boss-rewards.js"></script>
-  <script src="js/05-engine.js"></script>
-  <script src="js/06-controls.js"></script>
+  <script src="js/01-audio.js?v=1.12.0"></script>
+  <script src="js/02-state.js?v=1.12.0"></script>
+  <script src="js/03-characters.js?v=1.12.0"></script>
+  <script src="js/04-weapons-enemies.js?v=1.12.0"></script>
+  <script src="js/04-enemy-sprites.js?v=1.12.0"></script>
+  <script src="js/04-movement.js?v=1.12.0"></script>
+  <script src="js/04-bosses.js?v=1.12.0"></script>
+  <script src="js/04-boss-intro.js?v=1.12.0"></script>
+  <script src="js/05-ultimate.js?v=1.12.0"></script>
+  <script src="js/05-results.js?v=1.12.0"></script>
+  <script src="js/05-boss-rewards.js?v=1.12.0"></script>
+  <script src="js/05-engine.js?v=1.12.0"></script>
+  <script src="js/06-controls.js?v=1.12.0"></script>
 </body>
 </html>

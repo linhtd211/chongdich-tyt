@@ -258,31 +258,9 @@
         if (pu.y > canvas.height + 20) powerUps.splice(i, 1);
       }
 
-      // Đàn quái chạm biên
-      if (!boss) {
-        let hitWall = false;
-        for (let e of enemies) {
-          if (!e) continue;
-          // Chuyển động lính theo nhịp mô phỏng 60Hz, không phụ thuộc màn 120Hz.
-          e.animTimer += .045 * enemyTimeScale;
-          e.x += enemyDir * enemySpeedX * enemyTimeScale;
-          if (e.x < e.radius + 2 || e.x > canvas.width - e.radius - 2) hitWall = true;
-        }
-
-        if (hitWall) {
-          enemyDir *= -1;
-          for (let e of enemies) {
-            if (!e) continue;
-            e.y += 12;
-            if (e.y >= player.y - 12) {
-              takeHit();
-              enemyBullets = [];
-              if (!isGameOver) spawnWave(); // Giữ nguyên wave khi quái vượt tuyến.
-              break;
-            }
-          }
-        }
-      }
+      // Đội hình lượn theo từng hàng, nảy ở biên và tiếp tục tiến xuống.
+      // Trả true nếu quái vượt tuyến: đã xử lý mất máu/khởi động lại wave.
+      if (!boss && updateEnemyFormation(enemyTimeScale)) return;
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -383,6 +361,10 @@
         else if (e.type === 'rod_red') drawRodRed(e);
         else if (e.type === 'worm_pink') drawWormPink(e);
         else if (e.type === 'hairy_cyan') drawHairyCyan(e);
+        if (e.diving) {
+          ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 1.8;
+          ctx.beginPath(); ctx.arc(e.x, e.y, e.radius + 6, 0, Math.PI * 2); ctx.stroke();
+        }
       }
 
       if (boss) { drawBossTelegraph(boss); drawBoss(boss); }
