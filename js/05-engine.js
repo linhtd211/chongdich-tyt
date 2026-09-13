@@ -447,8 +447,7 @@
         document.getElementById('wave-notice').classList.add('hidden');
         updateUltimateHud();
         document.getElementById('ultimate-effect').textContent = '';
-        document.getElementById('final-score').innerText = score;
-        document.getElementById('gameover-screen').classList.remove('hidden');
+        finishGame();
       }
     }
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.2.2 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.3 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -15,7 +15,8 @@
     <div class="pixel-font text-4xl text-emerald-400 mb-0.5 font-bold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">
       BIỆT ĐỘI Y TẾ TYT THẠCH THẤT
     </div>
-    <p class="text-xs text-slate-300 mb-3">Chọn nhân vật chuyên môn</p>
+    <p class="text-xs text-slate-300 mb-1">Chọn nhân vật chuyên môn</p>
+    <p class="text-amber-300 text-xs mb-3">🏆 Kỷ lục: <strong id="intro-record">0</strong> điểm · Wave xa nhất: <strong id="intro-wave">0</strong></p>
 
     <!-- 3 Thẻ Nhân Vật -->
     <div class="grid grid-cols-3 gap-2 w-full max-w-sm mb-4">
@@ -57,15 +58,21 @@
     </button>
   </div>
 
-  <!-- MÀN HÌNH GAME OVER -->
-  <div id="gameover-screen" class="hidden absolute inset-0 bg-rose-950/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-6 text-center">
-    <div class="pixel-font text-5xl text-rose-500 mb-1 font-bold drop-shadow-[0_0_15px_rgba(244,63,94,0.8)]">
-      NHIỄM TRÙNG HUYẾT!
+  <!-- MÀN KẾT QUẢ: cập nhật bằng js/05-results.js khi người chơi hết máu. -->
+  <div id="gameover-screen" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex flex-col items-center justify-center p-5 text-center overflow-y-auto">
+    <div class="pixel-font text-5xl text-rose-400 font-bold">KẾT THÚC VÁN!</div>
+    <div id="new-record-badge" class="hidden rounded-full bg-amber-400 px-4 py-1 text-slate-950 text-xs font-bold my-2">🏆 KỶ LỤC MỚI!</div>
+    <div class="w-full max-w-xs rounded-2xl border border-emerald-500/50 bg-slate-900/90 p-4 my-4 shadow-lg">
+      <div class="pixel-font text-5xl text-amber-300">ĐIỂM: <span id="final-score">0</span></div>
+      <div class="grid grid-cols-2 gap-2 text-sm mt-3 text-left">
+        <div class="rounded-lg bg-slate-800 p-2">Wave đạt được<br><strong id="final-wave" class="text-sky-300 text-xl">1</strong></div>
+        <div class="rounded-lg bg-slate-800 p-2">Nhân vật<br><strong id="final-hero" class="text-emerald-300">Bác sĩ</strong></div>
+        <div class="rounded-lg bg-slate-800 p-2">Kỷ lục điểm<br><strong id="final-record" class="text-amber-300 text-xl">0</strong></div>
+        <div class="rounded-lg bg-slate-800 p-2">Wave xa nhất<br><strong id="final-best-wave" class="text-amber-300 text-xl">0</strong></div>
+      </div>
     </div>
-    <p class="text-sm text-slate-200 mb-3">Mầm bệnh đã phá vỡ tuyến phòng thủ trạm y tế!</p>
-    <div class="pixel-font text-4xl text-amber-300 mb-6">ĐIỂM: <span id="final-score">0</span></div>
-    <button onclick="openCharSelect()" class="bg-gradient-to-r from-rose-600 to-pink-600 active:scale-95 pixel-font text-2xl px-8 py-3 rounded-xl border-2 border-rose-300 shadow-[0_0_15px_rgba(225,29,72,0.6)]">
-      ĐỔI NHÂN VẬT & LÀM LẠI
+    <button onclick="openCharSelect()" class="bg-gradient-to-r from-emerald-600 to-teal-500 active:scale-95 pixel-font text-3xl px-8 py-2 rounded-xl border-2 border-emerald-300">
+      ▶ CHƠI LẠI / ĐỔI NHÂN VẬT
     </button>
   </div>
 
@@ -123,6 +130,7 @@
   <script src="js/03-characters.js"></script>
   <script src="js/04-weapons-enemies.js"></script>
   <script src="js/05-ultimate.js"></script>
+  <script src="js/05-results.js"></script>
   <script src="js/05-engine.js"></script>
   <script src="js/06-controls.js"></script>
 </body>
