@@ -17,9 +17,9 @@
     }
     .pixel-font { font-family: 'VT323', monospace; }
 
-/* Nút tròn theo sát nhân vật: đường viền thể hiện phần trăm đã nạp. */
+/* Nút tròn cố định góc dưới bên phải; đường viền thể hiện phần trăm đã nạp. */
 .ultimate-button {
-  position: absolute; left: 0; top: 0; z-index: 10;
+  position: absolute; right: 12px; bottom: 14px; z-index: 10;
   width: 58px; height: 58px; padding: 0;
   border: 0; border-radius: 50%;
   display: flex; flex-direction: column; align-items: center; justify-content: center;

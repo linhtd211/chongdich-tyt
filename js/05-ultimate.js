@@ -113,21 +113,3 @@ function renderUltimate() {
     ctx.stroke();
   }
 }
-
-// Canh nút theo nhân vật (gần bên phải, sát mép thì đổi sang trái).
-// Lấy đúng khung ảnh 320x460 được object-contain vẽ bên trong phần tử canvas.
-function positionUltimateButton() {
-  const frame = document.getElementById('game-frame').getBoundingClientRect();
-  const rect = canvas.getBoundingClientRect();
-  const scale = Math.min(rect.width / canvas.width, rect.height / canvas.height);
-  const offsetX = rect.left - frame.left + (rect.width - canvas.width * scale) / 2;
-  const offsetY = rect.top - frame.top + (rect.height - canvas.height * scale) / 2;
-  const size = 58;
-  const heroX = offsetX + (player.x + player.w / 2) * scale;
-  const heroY = offsetY + (player.y + player.h / 2) * scale;
-  const proposedRight = heroX + 27;
-  const x = proposedRight + size > frame.width - 6 ? heroX - size - 27 : proposedRight;
-  const button = document.getElementById('ultimate-button');
-  button.style.left = `${Math.max(6, Math.min(frame.width - size - 6, x))}px`;
-  button.style.top = `${Math.max(6, Math.min(frame.height - size - 6, heroY - size - 24))}px`;
-}
