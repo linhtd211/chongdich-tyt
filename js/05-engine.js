@@ -153,7 +153,7 @@
       // Boss ra đòn
       if (boss) {
         boss.x += boss.vx * enemyTimeScale;
-        if (boss.x < 40 || boss.x > canvas.width - 40) boss.vx *= -1;
+        if (boss.x < 55 || boss.x > canvas.width - 55) boss.vx *= -1;
 
         boss.shootCooldown -= enemyTimeScale;
         if (boss.shootCooldown <= 0) {
@@ -384,7 +384,7 @@
         else if (e.type === 'hairy_cyan') drawHairyCyan(e);
       }
 
-      if (boss) drawBossGreenMonster(boss);
+      if (boss) drawBoss(boss);
 
       for (let p of particles) {
         ctx.fillStyle = p.color;

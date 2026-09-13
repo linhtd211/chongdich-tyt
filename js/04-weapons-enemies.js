@@ -155,49 +155,28 @@
       ctx.restore();
     }
 
-    function drawBossGreenMonster(b) {
+    // Boss lấy ảnh từ atlas nền trong suốt. Tải ảnh một lần, không vẽ lại từ tệp mỗi frame.
+    const bossAtlas = new Image();
+    bossAtlas.src = 'assets/boss-atlas.png';
+
+    function drawBoss(b) {
       b.animTimer += 0.04;
-      const t = b.animTimer;
-      ctx.save(); ctx.translate(b.x, b.y);
-
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.beginPath(); ctx.ellipse(0, b.h / 2 + 6, b.w / 2, 8, 0, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = '#84cc16';
-      [-22, -14, -6, 2, 10, 18, 24].forEach((ox, i) => {
-        const hLen = 22 + Math.sin(t * 4 + i) * 6;
-        ctx.beginPath(); ctx.moveTo(ox - 3, -b.h / 2 + 4);
-        ctx.quadraticCurveTo(ox + Math.sin(t * 3 + i) * 6, -b.h / 2 - hLen / 2, ox, -b.h / 2 - hLen);
-        ctx.quadraticCurveTo(ox + 4, -b.h / 2 - hLen / 2, ox + 3, -b.h / 2 + 4); ctx.fill();
-      });
-
-      [-24, -12, 0, 12, 24].forEach(sy => {
-        ctx.beginPath();
-        ctx.moveTo(-b.w / 2 + 2, sy - 3); ctx.lineTo(-b.w / 2 - 10, sy); ctx.lineTo(-b.w / 2 + 2, sy + 3);
-        ctx.moveTo(b.w / 2 - 2, sy - 3); ctx.lineTo(b.w / 2 + 10, sy); ctx.lineTo(b.w / 2 - 2, sy + 3); ctx.fill();
-      });
-
-      const gradBody = ctx.createRadialGradient(-6, -6, 6, 0, 0, b.w / 2);
-      gradBody.addColorStop(0, '#bef264'); gradBody.addColorStop(0.5, '#84cc16'); gradBody.addColorStop(1, '#4d7c0f');
-      ctx.fillStyle = gradBody;
-      ctx.beginPath(); ctx.ellipse(0, 0, b.w / 2, b.h / 2, 0, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-11, -12, 9, 0, Math.PI * 2); ctx.arc(10, -10, 11, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(-10, -12, 3.5, 0, Math.PI * 2); ctx.arc(11, -10, 4, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = '#365314'; ctx.beginPath(); ctx.ellipse(0, 8, 22, 12, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      for (let rx = -16; rx <= 16; rx += 7) {
-        ctx.beginPath(); ctx.moveTo(rx - 2.5, 0); ctx.lineTo(rx + 2.5, 0); ctx.lineTo(rx, 6); ctx.fill();
+      ctx.save();
+      ctx.translate(b.x, b.y + Math.sin(b.animTimer) * 2.5);
+      ctx.fillStyle = b.glow + '33';
+      ctx.beginPath(); ctx.ellipse(0, 0, 54, 49, 0, 0, Math.PI * 2); ctx.fill();
+      if (bossAtlas.complete && bossAtlas.naturalWidth && b.src) {
+        const [sx, sy, sw, sh] = b.src;
+        const ratio = Math.min(112 / sw, 104 / sh);
+        const dw = sw * ratio, dh = sh * ratio;
+        ctx.drawImage(bossAtlas, sx, sy, sw, sh, -dw / 2, -dh / 2, dw, dh);
+      } else {
+        // Ảnh chưa tải xong hoặc bị thiếu: hiện hình boss cũ thay vì khung trống.
+        ctx.fillStyle = '#84cc16';
+        ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.arc(-12, -8, 5, 0, Math.PI * 2); ctx.arc(12, -8, 5, 0, Math.PI * 2); ctx.fill();
       }
-      for (let rx = -13; rx <= 13; rx += 6.5) {
-        ctx.beginPath(); ctx.moveTo(rx - 2.2, 16); ctx.lineTo(rx + 2.2, 16); ctx.lineTo(rx, 10); ctx.fill();
-      }
-
-      const barW = 85;
-      ctx.fillStyle = '#1e293b'; ctx.fillRect(-barW / 2, -b.h / 2 - 24, barW, 5);
-      ctx.fillStyle = '#ef4444'; ctx.fillRect(-barW / 2, -b.h / 2 - 24, Math.max(0, (b.hp / b.maxHp) * barW), 5);
-
       ctx.restore();
     }
 

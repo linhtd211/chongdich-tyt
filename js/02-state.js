@@ -58,6 +58,25 @@
       { type: 'hairy_cyan',   hp: 4, color: '#22d3ee', score: 50, radius: 15, shootType: 'needle' }
     ];
 
+    // THƯ VIỆN BOSS: thứ tự mỗi 3 wave; hết danh sách thì quay vòng.
+    // src = [x, y, rộng, cao] trên assets/boss-atlas.png (ảnh nền trong suốt).
+    // Tên là danh xưng hư cấu trong game, không phải tên chẩn đoán bệnh.
+    const BOSS_TYPES = [
+      { name: 'Cơ Giáp Thực Khuẩn', src: [22, 5, 329, 266], glow: '#38bdf8' },
+      { name: 'Bầy Cầu Khuẩn Tím', src: [361, 12, 301, 260], glow: '#c084fc' },
+      { name: 'Rồng Sợi Lửa', src: [660, 7, 293, 265], glow: '#fb923c' },
+      { name: 'Chúa Cúm Gai', src: [963, 20, 195, 243], glow: '#f472b6' },
+      { name: 'Bạo Chúa Roi Quẩn', src: [1170, 18, 226, 250], glow: '#e879f9' },
+      { name: 'Dã Thú Nanh Độc', src: [1458, 21, 226, 240], glow: '#a3e635' },
+      { name: 'Vương Miện Corona', src: [38, 304, 371, 268], glow: '#fb923c' },
+      { name: 'Xoắn Trùng Hung Bạo', src: [477, 317, 393, 260], glow: '#f97316' },
+      { name: 'Chuột Bóng Dịch', src: [918, 304, 349, 277], glow: '#84cc16' },
+      { name: 'Dã Thú Thiết Giáp', src: [1292, 309, 394, 268], glow: '#facc15' },
+      { name: 'Pháo Đài Gai Than', src: [27, 630, 442, 275], glow: '#fb923c' },
+      { name: 'Lõi Retro Chiến Đấu', src: [554, 637, 283, 250], glow: '#38bdf8' },
+      { name: 'Nữ Hoàng Ký Sinh', src: [1295, 634, 389, 269], glow: '#fb7185' }
+    ];
+
     function spawnWave() {
       // Chuyển wave hoặc chơi lại wave sau khi quái vượt tuyến:
       // xóa toàn bộ đạn cũ, giữ powerUps để vẫn nhặt được vật phẩm boss rơi.
@@ -67,15 +86,19 @@
       boss = null;
 
       noticeTicks = 120; // Thông báo màn hiển thị 2 giây.
-      document.getElementById('wave-notice').textContent = wave % 3 === 0 ? `⚠ BOSS · WAVE ${wave}` : `WAVE ${wave}`;
-      document.getElementById('wave-notice').classList.remove('hidden');
-      if (wave % 3 === 0) {
+      const isBossWave = wave % 3 === 0;
+      const bossType = isBossWave ? BOSS_TYPES[(wave / 3 - 1) % BOSS_TYPES.length] : null;
+      const notice = document.getElementById('wave-notice');
+      notice.textContent = bossType ? `⚠ WAVE ${wave} · ${bossType.name}` : `WAVE ${wave}`;
+      notice.classList.toggle('boss-announcement', !!bossType);
+      notice.classList.remove('hidden');
+      if (bossType) {
         AudioEngine.bossRoar();
         const bossHp = 45 + (wave - 3) * 20;
         boss = {
-          name: 'Đại Trùng Gai Răng Nanh',
-          x: 130, y: 65,
-          w: 64, h: 80,
+          name: bossType.name, src: bossType.src, glow: bossType.glow,
+          x: 160, y: 67,
+          w: 92, h: 86,
           hp: bossHp, maxHp: bossHp,
           vx: 1.5, shootCooldown: 120, animTimer: 0
         };
