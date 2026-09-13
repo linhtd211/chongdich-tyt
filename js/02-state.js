@@ -62,18 +62,18 @@
     // Các con vẽ bằng code cùng phong cách nhân vật, không cần tải ảnh ngoài.
     const BOSS_TYPES = [
       { name: 'Cơ Giáp Thực Khuẩn', family: 'mech', color: '#38bdf8', attack: 'aimed' },
-      { name: 'Bầy Cầu Khuẩn Tím', family: 'serpent', color: '#c084fc', attack: 'split' },
-      { name: 'Rồng Sợi Lửa', family: 'serpent', color: '#fb923c', attack: 'fan' },
-      { name: 'Chúa Cúm Gai', family: 'virus', color: '#f472b6', attack: 'spread' },
-      { name: 'Bạo Chúa Roi Quẩn', family: 'virus', color: '#e879f9', attack: 'aimed' },
-      { name: 'Dã Thú Nanh Độc', family: 'beast', color: '#a3e635', attack: 'fan' },
-      { name: 'Vương Miện Corona', family: 'virus', color: '#fb923c', attack: 'split' },
-      { name: 'Xoắn Trùng Hung Bạo', family: 'serpent', color: '#f97316', attack: 'aimed' },
-      { name: 'Chuột Bóng Dịch', family: 'beast', color: '#84cc16', attack: 'split' },
-      { name: 'Dã Thú Bào Tử Than', family: 'beast', color: '#facc15', attack: 'spread' },
+      { name: 'Bầy Phế Cầu', family: 'serpent', color: '#c084fc', attack: 'split' },
+      { name: 'Chúa Tể Ebola', family: 'serpent', color: '#fb923c', attack: 'fan' },
+      { name: 'Trùm Sổ Mũi', family: 'virus', color: '#f472b6', attack: 'spread' },
+      { name: 'Trùm Tiêu Chảy', family: 'virus', color: '#e879f9', attack: 'aimed' },
+      { name: 'Chúa Tể Phát Dại', family: 'beast', color: '#a3e635', attack: 'fan' },
+      { name: 'F0 Bất Tử', family: 'virus', color: '#fb923c', attack: 'split' },
+      { name: 'Xoắn Khuẩn Vương', family: 'serpent', color: '#f97316', attack: 'aimed' },
+      { name: 'Hắc Hạch Yêu Vương', family: 'beast', color: '#84cc16', attack: 'split' },
+      { name: 'Dã Thú Hoại Tử', family: 'beast', color: '#facc15', attack: 'spread' },
       { name: 'Pháo Đài Gai Than', family: 'mech', color: '#fb923c', attack: 'fan' },
-      { name: 'Lõi Retro Chiến Đấu', family: 'mech', color: '#38bdf8', attack: 'spread' },
-      { name: 'Nữ Hoàng Ký Sinh', family: 'queen', color: '#fb7185', attack: 'split' }
+      { name: 'Linh Hồn Sa Ngã', family: 'mech', color: '#38bdf8', attack: 'spread' },
+      { name: 'Huyết Ký Sinh Vương', family: 'queen', color: '#fb7185', attack: 'split' }
     ];
 
     function spawnWave() {
