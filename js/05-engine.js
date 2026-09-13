@@ -27,6 +27,7 @@
       powerUps.push({ x: downed.x - 8, y: downed.y, w: 16, h: 18, vy: 1.4, color: '#facc15' });
       createImmunityShockwave(downed.x, downed.y);
       boss = null;
+      document.getElementById('boss-attack-warning').classList.add('hidden');
     }
 
     // Điều Dưỡng: khi đạn trúng, các quái trong phạm vi 30px nhận 1 sát thương.
@@ -374,7 +375,7 @@
         else if (e.type === 'hairy_cyan') drawHairyCyan(e);
       }
 
-      if (boss) drawBoss(boss);
+      if (boss) { drawBossTelegraph(boss); drawBoss(boss); }
 
       for (let p of particles) {
         ctx.fillStyle = p.color;
@@ -432,6 +433,7 @@
         shockwaves = [];
         enemies = [];
         boss = null;
+        document.getElementById('boss-attack-warning').classList.add('hidden');
         isTouching = false;
 
         document.getElementById('boss-hud').classList.add('hidden');
@@ -442,4 +444,3 @@
         finishGame();
       }
     }
-

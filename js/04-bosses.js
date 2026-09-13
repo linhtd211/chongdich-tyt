@@ -1,7 +1,8 @@
 /* BOSS CANVAS – VẼ & HÀNH ĐỘNG.
    BOSS_TYPES (tên, họ, màu, kiểu đạn) ở 02-state.js.
    Mỗi họ hình có chuyển động riêng. Không dùng ảnh atlas nên giữ nét vẽ giống nhân vật.
-   Tốc độ, thời gian báo trước và số đạn chỉnh trong updateBoss()/fireBossAttack(). */
+   Chiêu riêng của 12 boss nằm tại buildBossSpecial(); thời gian báo trước trong updateBoss().
+   Tất cả đạn đều theo cơ chế va chạm cũ, không tạo hiệu ứng mới mỗi frame. */
 
 function bossOval(x, y, rx, ry, fill, stroke = '#172033') {
   ctx.fillStyle = fill;
@@ -92,14 +93,7 @@ function drawMechBoss(b, t, blink) {
   ctx.beginPath(); ctx.moveTo(0, -34); ctx.lineTo(26, -16); ctx.lineTo(28, 19);
   ctx.lineTo(0, 35); ctx.lineTo(-28, 19); ctx.lineTo(-26, -16); ctx.closePath();
   ctx.fill(); ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 3; ctx.stroke();
-  if (b.variant === 10) { // Pháo đài: thêm hai tấm giáp bên và nòng pháo.
-    for (const side of [-1, 1]) {
-      ctx.fillStyle = '#475569'; ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2;
-      ctx.fillRect(side < 0 ? -42 : 27, -18, 15, 35);
-      ctx.strokeRect(side < 0 ? -42 : 27, -18, 15, 35);
-    }
-  }
-  if (b.variant === 11) { // Lõi Retro: sáu tia năng lượng quay.
+  if (b.variant === 10) { // Lõi Retro: sáu tia năng lượng quay.
     for (let i = 0; i < 6; i++) {
       const a = i * Math.PI / 3 + t;
       bossLine(Math.cos(a) * 28, Math.sin(a) * 28, Math.cos(a) * 35, Math.sin(a) * 35, '#67e8f9', 3);
@@ -122,8 +116,10 @@ function drawBeastBoss(b, t, blink) {
     bossLine(side * 27, 38, side * 33, 41, '#f8fafc', 4);
   }
   bossOval(0, 2, 32, 29, b.color);
-  if (b.variant === 9) { // Thiết giáp: vảy trên lưng.
-    for (let i = -2; i <= 2; i++) bossOval(i * 11, -21, 7, 5, '#475569', '#fef08a');
+  if (b.variant === 9) { // Dã Thú Hoại Tử: vệt đen trên lớp giáp, khác dáng chuột dịch.
+    for (let i = -2; i <= 2; i++) bossOval(i * 11, -21, 7, 5, '#292524', '#fde68a');
+    bossOval(-17, 7, 4, 5, '#3f1d22', '#ef4444');
+    bossOval(17, 8, 4, 5, '#3f1d22', '#ef4444');
   }
   if (b.variant === 8) { // Chuột: râu mép rung.
     for (const side of [-1, 1]) for (let i = 0; i < 2; i++)
@@ -183,6 +179,66 @@ function bossProjectile(b, type, vx, vy, xOffset = 0) {
   enemyBullets.push({ type, x: b.x + xOffset, y: b.y + 28, vx, vy,
     ...(type === 'split' ? { splitTimer: 45 } : {}) });
 }
+
+// Mỗi boss có một cách tung đòn riêng. Chụp vị trí nhân vật tại lúc BẮT ĐẦU
+// báo chiêu: vạch cảnh báo trùng với đường đạn sẽ bay, kể cả khi nhân vật né.
+// Tối đa 7 viên/đòn; đạn tách tối đa 3 viên trước khi phân nhánh.
+function buildBossSpecial(b) {
+  const x = b.x, y = b.y + 28;
+  const target = player.x + player.w / 2;
+  const aim = (origin, speed = 3.2) => Math.max(-1.8, Math.min(1.8,
+    (target - origin) * speed / Math.max(100, player.y - y)));
+  const shot = (offset, vx, vy, type = 'needle') =>
+    ({ x: x + offset, y, vx, vy, type, ...(type === 'split' ? { splitTimer: 45 } : {}) });
+  let name, shots;
+  switch (b.variant) {
+    case 0: name = 'Ba mũi điện truy dấu'; shots = [-22, 0, 22].map(o => shot(o, aim(x + o) + o / 65, 3.3)); break;
+    case 1: name = 'Bầy khuẩn phân đàn'; shots = [-25, 0, 25].map(o => shot(o, o / 35, 2.5, 'split')); break;
+    case 2: name = 'Cung máu bảy tia'; shots = [-3, -2, -1, 0, 1, 2, 3].map(n => shot(0, n * .55, 3)); break;
+    case 3: name = 'Cơn hắt hơi chéo'; shots = [-2, -1, 0, 1, 2].map(n => shot(n * 12, 1.1 + n * .35, 3.1)); break;
+    case 4: name = 'Mưa độc ba cột'; shots = [55, canvas.width / 2, canvas.width - 55].map(cx => shot(cx - x, 0, 2.7, 'split')); break;
+    case 5: name = 'Vuốt dại chụm đích'; shots = [-35, -17, 0, 17, 35].map(o => shot(o, aim(x + o, 3.2), 3.2)); break;
+    case 6: name = 'Vòng lây lan'; shots = [-2, -1, 0, 1, 2].map(n => shot(n * 14, n * .7, 2.9)); break;
+    case 7: name = 'Xoắn khuẩn đan chéo'; shots = [-3, -2, -1, 0, 1, 2, 3].map(n => shot(n * 9, -n * .48, 3)); break;
+    case 8: name = 'Hạch đen nứt vỡ'; shots = [-28, 0, 28].map(o => shot(o, -o / 42, 2.6, 'split')); break;
+    case 9: name = 'Vệt hoại tử hội tụ'; shots = [-30, -10, 10, 30].map(o => shot(o, -o / 50, 3.4)); break;
+    case 10: name = 'Lưới linh hồn'; shots = [-2, -1, 0, 1, 2].map(n => shot(n * 17, -n * .75, 3.1)); break;
+    default: name = 'Huyết vũ truy đuổi'; shots = [-24, 0, 24].map(o => shot(o, aim(x + o, 2.5), 2.5, 'split'));
+  }
+  return { name, shots };
+}
+
+function drawBossTelegraph(b) {
+  if (!b.specialShots || b.windup <= 0) return;
+  const pulse = .45 + .25 * Math.sin(b.animTimer * 14);
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, 0, canvas.width, canvas.height); ctx.clip();
+  ctx.setLineDash([7, 6]);
+  ctx.strokeStyle = `rgba(251, 191, 36, ${pulse})`;
+  ctx.lineWidth = 3;
+  for (const s of b.specialShots) {
+    const ticks = Math.min(160, (canvas.height - s.y) / s.vy);
+    if (s.type === 'split' && ticks > 45) {
+      // Viên gốc dừng ở điểm tách; ba nhánh mới mới bay tiếp từ đây.
+      const splitX = s.x + s.vx * 45, splitY = s.y + s.vy * 45;
+      ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(splitX, splitY); ctx.stroke();
+      const remain = (canvas.height - splitY) / 2.8;
+      for (const vx of [-1.2, 0, 1.2]) {
+        ctx.beginPath(); ctx.moveTo(splitX, splitY);
+        ctx.lineTo(splitX + vx * remain, canvas.height); ctx.stroke();
+      }
+    } else {
+      ctx.beginPath(); ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x + s.vx * ticks, s.y + s.vy * ticks); ctx.stroke();
+    }
+  }
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#fef3c7';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`⚠ ${b.specialName}`, canvas.width / 2, 178);
+  ctx.restore();
+}
 function fireBossAttack(b) {
   b.attackCount++;
   if (b.attack === 'aimed') {
@@ -199,7 +255,8 @@ function fireBossAttack(b) {
 }
 
 function updateBoss(b, timeScale) {
-  b.x += b.vx * timeScale;
+  // Khóa vị trí khi báo chiêu để đường đạn thực tế luôn theo đúng vạch cảnh báo.
+  if (!b.specialShots) b.x += b.vx * timeScale;
   if (b.x < 55) { b.x = 55; b.vx = Math.abs(b.vx); }
   else if (b.x > canvas.width - 55) { b.x = canvas.width - 55; b.vx = -Math.abs(b.vx); }
   if (b.hitFlash > 0) b.hitFlash--;
@@ -207,11 +264,31 @@ function updateBoss(b, timeScale) {
     b.windup -= timeScale;
     if (b.windup <= 0) {
       b.windup = 0;
-      fireBossAttack(b);
-      b.shootCooldown = 48 + (b.variant % 3) * 10;
+      if (b.specialShots) {
+        enemyBullets.push(...b.specialShots);
+        b.specialShots = null;
+        b.specialName = '';
+        b.attackCount++;
+        document.getElementById('boss-attack-warning').classList.add('hidden');
+        b.shootCooldown = 85; // Sau chiêu riêng có nhịp nghỉ cho người chơi né.
+      } else {
+        fireBossAttack(b);
+        b.shootCooldown = 55 + (b.variant % 3) * 10;
+      }
     }
   } else {
     b.shootCooldown -= timeScale;
-    if (b.shootCooldown <= 0) b.windup = 25; // báo trước 25 tick (~0,4 giây).
+    if (b.shootCooldown <= 0) {
+      if ((b.attackCount + 1) % 3 === 0) {
+        const special = buildBossSpecial(b);
+        b.specialShots = special.shots;
+        b.specialName = special.name;
+        b.windup = 65; // Hơn 1 giây báo trước chiêu riêng.
+        const warning = document.getElementById('boss-attack-warning');
+        warning.textContent = `⚠ Sắp ra chiêu: ${special.name} · né khỏi vạch vàng!`;
+        warning.classList.remove('hidden');
+      } else b.windup = 25; // Đòn thường: 0,4 giây cảnh báo bằng vòng sáng.
+      b.windupTotal = b.windup;
+    }
   }
 }

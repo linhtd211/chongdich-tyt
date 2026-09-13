@@ -113,6 +113,7 @@
       document.getElementById('pause-button').textContent = '⏸ Tạm dừng';
       document.getElementById('shield-hud').classList.add('hidden');
       document.getElementById('boss-hud').classList.add('hidden');
+      document.getElementById('boss-attack-warning').classList.add('hidden');
 
       score = 0;
       hp = 3;
@@ -148,6 +149,7 @@
       bossIntroActive = false;
       document.getElementById('boss-intro-screen').classList.add('hidden');
       updateUltimateHud();
+      document.getElementById('boss-attack-warning').classList.add('hidden');
       renderPreviews();
     }
 

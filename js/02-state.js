@@ -58,8 +58,8 @@
       { type: 'hairy_cyan',   hp: 4, color: '#22d3ee', score: 50, radius: 15, shootType: 'needle' }
     ];
 
-    // BOSS CANVAS: 13 danh xưng, 5 họ hình dáng, 5 kiểu tấn công.
-    // Các con vẽ bằng code cùng phong cách nhân vật, không cần tải ảnh ngoài.
+    // BOSS CANVAS: 12 boss luân phiên, 5 họ hình dáng, nhiều kiểu tấn công.
+    // Boss bệnh than được giữ lại một lần: Dã Thú Hoại Tử.
     const BOSS_TYPES = [
       { name: 'Cơ Giáp Thực Khuẩn', family: 'mech', color: '#38bdf8', attack: 'aimed' },
       { name: 'Bầy Phế Cầu', family: 'serpent', color: '#c084fc', attack: 'split' },
@@ -71,9 +71,8 @@
       { name: 'Xoắn Khuẩn Vương', family: 'serpent', color: '#f97316', attack: 'aimed' },
       { name: 'Hắc Hạch Yêu Vương', family: 'beast', color: '#84cc16', attack: 'split' },
       { name: 'Dã Thú Hoại Tử', family: 'beast', color: '#facc15', attack: 'spread' },
-      { name: 'Pháo Đài Gai Than', family: 'mech', color: '#fb923c', attack: 'fan' },
       { name: 'Linh Hồn Sa Ngã', family: 'mech', color: '#38bdf8', attack: 'spread' },
-      { name: 'Huyết Ký Sinh Vương', family: 'queen', color: '#fb7185', attack: 'split' }
+      { name: 'Huyết Ký Sinh Vương', family: 'queen', color: '#fb7185', attack: 'split' },
     ];
 
     function spawnWave() {
@@ -83,6 +82,7 @@
       enemyBullets = [];
       enemies = [];
       boss = null;
+      document.getElementById('boss-attack-warning').classList.add('hidden');
 
       noticeTicks = 120; // Thông báo màn hiển thị 2 giây.
       const isBossWave = wave % 3 === 0;
@@ -96,8 +96,8 @@
         const bossHp = 45 + (wave - 3) * 20;
         boss = {
           name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
-          variant: (wave / 3 - 1) % BOSS_TYPES.length, attackCount: 0,
-          windup: 0, hitFlash: 0,
+          variant: (wave / 3 - 1) % BOSS_TYPES.length, attackCount: 2,
+          windup: 0, windupTotal: 0, specialShots: null, specialName: '', hitFlash: 0,
           x: 160, y: 67,
           w: 92, h: 86,
           hp: bossHp, maxHp: bossHp,
@@ -132,4 +132,3 @@
 
     let enemyDir = 1;
     let enemySpeedX = 0.7;
-

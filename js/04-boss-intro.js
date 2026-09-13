@@ -50,11 +50,6 @@ const BOSS_FACTS = [
   },
   {
     agent: 'Vi khuẩn than (Bacillus anthracis)',
-    fact: 'Bào tử vi khuẩn than có thể xâm nhập qua da, đường hô hấp hoặc tiêu hóa và gây bệnh nghiêm trọng.',
-    source: 'https://www.cdc.gov/anthrax/about/index.html'
-  },
-  {
-    agent: 'Vi khuẩn than (Bacillus anthracis)',
     fact: 'Bệnh than qua da thường gây tổn thương có tâm màu đen; thể hít phải bào tử có thể rất nặng.',
     source: 'https://www.cdc.gov/anthrax/about/index.html'
   },
