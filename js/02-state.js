@@ -70,7 +70,7 @@
       { name: 'Vương Miện Corona', family: 'virus', color: '#fb923c', attack: 'split' },
       { name: 'Xoắn Trùng Hung Bạo', family: 'serpent', color: '#f97316', attack: 'aimed' },
       { name: 'Chuột Bóng Dịch', family: 'beast', color: '#84cc16', attack: 'split' },
-      { name: 'Dã Thú Thiết Giáp', family: 'beast', color: '#facc15', attack: 'spread' },
+      { name: 'Dã Thú Bào Tử Than', family: 'beast', color: '#facc15', attack: 'spread' },
       { name: 'Pháo Đài Gai Than', family: 'mech', color: '#fb923c', attack: 'fan' },
       { name: 'Lõi Retro Chiến Đấu', family: 'mech', color: '#38bdf8', attack: 'spread' },
       { name: 'Nữ Hoàng Ký Sinh', family: 'queen', color: '#fb7185', attack: 'split' }
@@ -103,6 +103,7 @@
           hp: bossHp, maxHp: bossHp,
           vx: 1.5, shootCooldown: 120, animTimer: 0
         };
+        showBossIntro(bossType, wave);
         return;
       }
 

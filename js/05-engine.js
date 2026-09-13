@@ -41,7 +41,7 @@
     }
 
     function update() {
-      if (isGameOver || isPaused) return;
+      if (isGameOver || isPaused || bossIntroActive) return;
 
       player.x += (player.targetX - player.x) * 0.35;
       player.y += (player.targetY - player.y) * 0.35;
@@ -389,6 +389,8 @@
     // Dồn thời gian qua từng khung hình; tối đa 5 bước để tránh máy lag tạo bước nhảy lớn.
     function gameLoop(time) {
       if (isPaused || isGameOver) return;
+      // Trong lúc đọc giới thiệu, dừng mô phỏng và không vẽ liên tục để tiết kiệm pin.
+      if (bossIntroActive) { animationId = null; return; }
       if (!lastFrameTime) lastFrameTime = time;
       accumulatedTime = Math.min(accumulatedTime + Math.min(time - lastFrameTime, 250), STEP_MS * 5);
       lastFrameTime = time;

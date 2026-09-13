@@ -10,7 +10,7 @@
     }
 
     canvas.addEventListener('pointerdown', e => {
-      if (isPaused || isGameOver || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
+      if (isPaused || isGameOver || bossIntroActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
       e.preventDefault();
       AudioEngine.init();
       canvas.setPointerCapture(e.pointerId);
@@ -31,6 +31,10 @@
     window.addEventListener('keydown', e => {
       const k = e.key.toLowerCase();
       if (['arrowleft','arrowright','arrowup','arrowdown',' ','enter'].includes(k)) e.preventDefault();
+      if (bossIntroActive) {
+        if ((k === 'enter' || k === ' ') && !e.repeat) closeBossIntro();
+        return;
+      }
       if ((k === 'p' || k === 'escape') && !e.repeat) { togglePause(); return; }
       if (k === 'b' && !e.repeat) { activateUltimate(); return; }
       if (!isPaused && !isGameOver && document.getElementById('char-select-screen').classList.contains('hidden')) {
@@ -44,7 +48,7 @@
     window.addEventListener('blur', () => {
       heldKeys.clear();
       isTouching = false;
-      if (!isPaused && !isGameOver && document.getElementById('char-select-screen').classList.contains('hidden')) togglePause();
+      if (!isPaused && !isGameOver && !bossIntroActive && document.getElementById('char-select-screen').classList.contains('hidden')) togglePause();
     });
 
     // Được gọi 60 lần/giây từ vòng game; 3px mỗi bước ≈ 180px/giây.
@@ -60,7 +64,7 @@
     }
 
     function togglePause() {
-      if (isGameOver || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
+      if (isGameOver || bossIntroActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
       isPaused = !isPaused;
       document.getElementById('pause-screen').classList.toggle('hidden', !isPaused);
       document.getElementById('pause-button').textContent = isPaused ? '▶ Tiếp tục' : '⏸ Tạm dừng';
@@ -101,6 +105,8 @@
       enemyDir = 1;
       enemySpeedX = 0.7;
       noticeTicks = 0;
+      bossIntroActive = false;
+      document.getElementById('boss-intro-screen').classList.add('hidden');
       resetUltimate();
       document.getElementById('ultimate-effect').textContent = '';
       document.getElementById('pause-screen').classList.add('hidden');
@@ -139,6 +145,8 @@
       }
       document.getElementById('gameover-screen').classList.add('hidden');
       document.getElementById('char-select-screen').classList.remove('hidden');
+      bossIntroActive = false;
+      document.getElementById('boss-intro-screen').classList.add('hidden');
       updateUltimateHud();
       renderPreviews();
     }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.5 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.6 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -56,6 +56,20 @@
     <button onclick="startGame()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 active:scale-95 pixel-font text-3xl px-10 py-2.5 rounded-2xl border-2 border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
       ▶ VÀO VÙNG DỊCH
     </button>
+  </div>
+
+  <!-- GIỚI THIỆU BOSS: tạm dừng trận, hiển thị thông tin tham chiếu và nguồn y tế. -->
+  <div id="boss-intro-screen" class="hidden absolute inset-0 z-40 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-5 text-center overflow-y-auto">
+    <div class="w-full max-w-sm rounded-3xl border-2 border-rose-400/60 bg-slate-900/95 p-5 shadow-[0_0_35px_rgba(244,63,94,0.25)]">
+      <div id="boss-intro-wave" class="pixel-font text-2xl text-amber-300">WAVE 3 · BOSS</div>
+      <h2 id="boss-intro-name" class="pixel-font text-4xl text-rose-300 leading-tight mt-1">Tên boss</h2>
+      <p class="text-xs text-slate-400 mt-2">Nhân vật hư cấu · lấy cảm hứng từ</p>
+      <p id="boss-intro-agent" class="font-bold text-sky-300 text-sm mt-1"></p>
+      <p id="boss-intro-fact" class="text-sm text-slate-100 leading-relaxed mt-4"></p>
+      <a id="boss-intro-source" href="#" target="_blank" rel="noopener noreferrer" class="inline-block text-sky-300 underline text-xs mt-3">Xem nguồn y tế ↗</a>
+      <p class="text-[10px] text-slate-400 mt-3">Thông tin để tìm hiểu, không dùng để chẩn đoán.</p>
+      <button type="button" onclick="closeBossIntro()" class="block mx-auto mt-4 rounded-xl bg-gradient-to-r from-rose-600 to-orange-500 border border-rose-200 px-8 py-3 pixel-font text-3xl active:scale-95">▶ BẮT ĐẦU ĐẤU BOSS</button>
+    </div>
   </div>
 
   <!-- MÀN KẾT QUẢ: cập nhật bằng js/05-results.js khi người chơi hết máu. -->
@@ -130,6 +144,7 @@
   <script src="js/03-characters.js"></script>
   <script src="js/04-weapons-enemies.js"></script>
   <script src="js/04-bosses.js"></script>
+  <script src="js/04-boss-intro.js"></script>
   <script src="js/05-ultimate.js"></script>
   <script src="js/05-results.js"></script>
   <script src="js/05-engine.js"></script>
