@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.8.0 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.8.1 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -123,10 +123,8 @@
   <!-- KHUNG GAME CANVAS (320x460) -->
   <div id="game-frame" class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
-    <!-- Nút cố định; sự kiện chạm được giữ riêng, không truyền vào canvas. -->
-    <button id="ultimate-button" type="button" onclick="activateUltimate()"
-      onpointerdown="event.stopPropagation()" onpointermove="event.stopPropagation()"
-      onpointerup="event.stopPropagation()" onpointercancel="event.stopPropagation()"
+    <!-- Nút cố định: pointerdown và click bàn phím gắn trong js/06-controls.js. -->
+    <button id="ultimate-button" type="button"
       class="ultimate-button" aria-disabled="true" aria-label="Tuyệt kỹ chưa nạp đầy">
       <span class="ultimate-icon" aria-hidden="true">⚡</span><span class="ultimate-short" aria-hidden="true">B</span>
     </button>
@@ -136,7 +134,7 @@
     </div>
     <div id="wave-notice" class="hidden absolute top-1/3 left-2 right-2 pointer-events-none text-center pixel-font text-4xl text-amber-300 drop-shadow-lg"></div>
     <div id="mobile-guide" style="max-width:calc(100% - 85px)" class="absolute bottom-3 left-2 text-slate-400/70 text-[10px] pointer-events-none transition-opacity uppercase tracking-wider font-semibold">
-      Kéo trong khung để di chuyển và bắn · né đạn độc
+      Kéo để di chuyển và bắn · ngón kia chạm nút B
     </div>
   </div>
 

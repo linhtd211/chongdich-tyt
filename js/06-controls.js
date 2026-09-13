@@ -1,6 +1,7 @@
-/* ĐIỀU KHIỂN & KHỞI ĐỘNG: chạm, chuột, bàn phím; startGame đặt lại dữ liệu; openCharSelect mở màn chọn. Sửa phím ở keydown/keyup.
+/* ĐIỀU KHIỂN & KHỞI ĐỘNG: chạm đa điểm, chuột, bàn phím; startGame đặt lại dữ liệu.
    Các tệp JS phải được nạp đúng thứ tự khai báo trong index.html. */
-    // --- 8. ĐIỀU KHIỂN: CHỈ CANVAS NHẬN CHẠM / CHUỘT ---
+    // --- 8. ĐIỀU KHIỂN: ngón kéo và ngón bấm tuyệt kỹ hoạt động độc lập ---
+    let movementPointerId = null;
     function updateTouchPosition(clientX, clientY) {
       const rect = canvas.getBoundingClientRect();
       const x = (clientX - rect.left) * canvas.width / rect.width;
@@ -11,20 +12,41 @@
 
     canvas.addEventListener('pointerdown', e => {
       if (isPaused || isGameOver || bossIntroActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
+      // Chỉ ngón chạm canvas đầu tiên được điều khiển nhân vật.
       e.preventDefault();
+      if (movementPointerId !== null) return;
       AudioEngine.init();
+      movementPointerId = e.pointerId;
       canvas.setPointerCapture(e.pointerId);
       isTouching = true;
       updateTouchPosition(e.clientX, e.clientY);
       document.getElementById('mobile-guide').style.opacity = '0';
     });
     canvas.addEventListener('pointermove', e => {
-      if (isTouching && !isPaused) updateTouchPosition(e.clientX, e.clientY);
+      if (e.pointerId === movementPointerId && isTouching && !isPaused) updateTouchPosition(e.clientX, e.clientY);
     });
-    function stopPointer(e) { isTouching = false; }
+    function stopPointer(e) {
+      if (e.pointerId !== movementPointerId) return;
+      movementPointerId = null;
+      isTouching = false;
+    }
     canvas.addEventListener('pointerup', stopPointer);
     canvas.addEventListener('pointercancel', stopPointer);
     canvas.addEventListener('lostpointercapture', stopPointer);
+
+    // Điện thoại có thể bỏ click khi ngón khác đang kéo canvas: nhận ngay pointerdown.
+    // click detail=0 vẫn cho bàn phím và công cụ trợ năng, không kích hoạt hai lần.
+    const ultimateButton = document.getElementById('ultimate-button');
+    ultimateButton.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      if (e.button !== 0) return;
+      e.preventDefault();
+      activateUltimate();
+    });
+    ultimateButton.addEventListener('click', e => {
+      e.stopPropagation();
+      if (e.detail === 0) activateUltimate();
+    });
 
     // Bàn phím: giữ phím để di chuyển liên tục; P/Escape tạm dừng.
     const heldKeys = new Set();
@@ -48,6 +70,7 @@
     window.addEventListener('blur', () => {
       heldKeys.clear();
       isTouching = false;
+      movementPointerId = null;
       if (!isPaused && !isGameOver && !bossIntroActive && document.getElementById('char-select-screen').classList.contains('hidden')) togglePause();
     });
 
@@ -71,6 +94,7 @@
       updateUltimateHud();
       if (isPaused) {
         isTouching = false;
+        movementPointerId = null;
         heldKeys.clear();
         cancelAnimationFrame(animationId);
         animationId = null;
@@ -98,6 +122,7 @@
       enemies = [];
       boss = null;
       isTouching = false;
+      movementPointerId = null;
       heldKeys.clear();
       isPaused = false;
       lastFrameTime = 0;
@@ -140,6 +165,8 @@
     }
 
     function openCharSelect() {
+      isTouching = false;
+      movementPointerId = null;
       if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
