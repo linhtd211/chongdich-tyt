@@ -124,6 +124,7 @@
       
       spawnWave();
       update();
+      render();
       animationId = requestAnimationFrame(gameLoop);
     }
 

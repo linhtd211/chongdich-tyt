@@ -292,6 +292,10 @@
         spawnWave();
       }
 
+    }
+
+    // Chỉ vẽ một lần cho mỗi khung hình màn hình, kể cả khi phải mô phỏng nhiều bước.
+    function render() {
       // --- 7. RENDER RA MÀN HÌNH ---
       ctx.fillStyle = '#02120e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -392,11 +396,16 @@
       if (!lastFrameTime) lastFrameTime = time;
       accumulatedTime = Math.min(accumulatedTime + Math.min(time - lastFrameTime, 250), STEP_MS * 5);
       lastFrameTime = time;
+      let steps = 0;
       while (accumulatedTime >= STEP_MS && !isGameOver && !isPaused) {
         update();
         accumulatedTime -= STEP_MS;
+        steps++;
       }
-      if (!isGameOver && !isPaused) animationId = requestAnimationFrame(gameLoop);
+      if (!isGameOver && !isPaused) {
+        if (steps > 0) render();
+        animationId = requestAnimationFrame(gameLoop);
+      }
     }
 
     function takeHit() {

@@ -210,7 +210,9 @@
     }
 
     function createExplosion(x, y, color, count = 10) {
-      for (let i = 0; i < count; i++) {
+      // Giữ hiệu ứng rõ nét nhưng không để hạt tích lũy vô hạn khi nhiều quái chết cùng lúc.
+      const freeSlots = Math.max(0, 240 - particles.length);
+      for (let i = 0; i < Math.min(count, freeSlots); i++) {
         particles.push({
           x: x, y: y,
           vx: (Math.random() - 0.5) * 5.5,
