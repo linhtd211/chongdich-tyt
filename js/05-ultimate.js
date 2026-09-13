@@ -66,6 +66,7 @@ function activateUltimate() {
     }
     if (boss && Math.abs(boss.x - beamX) <= MEGA_BEAM_WIDTH / 2 + boss.w / 2) {
       boss.hp -= 12;
+      boss.hitFlash = 9;
       createExplosion(boss.x, boss.y, '#fb7185', 16);
       defeatBoss();
     }

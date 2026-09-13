@@ -155,31 +155,6 @@
       ctx.restore();
     }
 
-    // Boss lấy ảnh từ atlas nền trong suốt. Tải ảnh một lần, không vẽ lại từ tệp mỗi frame.
-    const bossAtlas = new Image();
-    bossAtlas.src = 'assets/boss-atlas.png';
-
-    function drawBoss(b) {
-      b.animTimer += 0.04;
-      ctx.save();
-      ctx.translate(b.x, b.y + Math.sin(b.animTimer) * 2.5);
-      ctx.fillStyle = b.glow + '33';
-      ctx.beginPath(); ctx.ellipse(0, 0, 54, 49, 0, 0, Math.PI * 2); ctx.fill();
-      if (bossAtlas.complete && bossAtlas.naturalWidth && b.src) {
-        const [sx, sy, sw, sh] = b.src;
-        const ratio = Math.min(112 / sw, 104 / sh);
-        const dw = sw * ratio, dh = sh * ratio;
-        ctx.drawImage(bossAtlas, sx, sy, sw, sh, -dw / 2, -dh / 2, dw, dh);
-      } else {
-        // Ảnh chưa tải xong hoặc bị thiếu: hiện hình boss cũ thay vì khung trống.
-        ctx.fillStyle = '#84cc16';
-        ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath(); ctx.arc(-12, -8, 5, 0, Math.PI * 2); ctx.arc(12, -8, 5, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.restore();
-    }
-
     function drawPowerUp(p) {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(p.x + 2, p.y + 4, 12, 14);

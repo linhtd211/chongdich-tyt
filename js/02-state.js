@@ -58,23 +58,22 @@
       { type: 'hairy_cyan',   hp: 4, color: '#22d3ee', score: 50, radius: 15, shootType: 'needle' }
     ];
 
-    // THƯ VIỆN BOSS: thứ tự mỗi 3 wave; hết danh sách thì quay vòng.
-    // src = [x, y, rộng, cao] trên assets/boss-atlas.png (ảnh nền trong suốt).
-    // Tên là danh xưng hư cấu trong game, không phải tên chẩn đoán bệnh.
+    // BOSS CANVAS: 13 danh xưng, 5 họ hình dáng, 5 kiểu tấn công.
+    // Các con vẽ bằng code cùng phong cách nhân vật, không cần tải ảnh ngoài.
     const BOSS_TYPES = [
-      { name: 'Cơ Giáp Thực Khuẩn', src: [22, 5, 329, 266], glow: '#38bdf8' },
-      { name: 'Bầy Cầu Khuẩn Tím', src: [361, 12, 301, 260], glow: '#c084fc' },
-      { name: 'Rồng Sợi Lửa', src: [660, 7, 293, 265], glow: '#fb923c' },
-      { name: 'Chúa Cúm Gai', src: [963, 20, 195, 243], glow: '#f472b6' },
-      { name: 'Bạo Chúa Roi Quẩn', src: [1170, 18, 226, 250], glow: '#e879f9' },
-      { name: 'Dã Thú Nanh Độc', src: [1458, 21, 226, 240], glow: '#a3e635' },
-      { name: 'Vương Miện Corona', src: [38, 304, 371, 268], glow: '#fb923c' },
-      { name: 'Xoắn Trùng Hung Bạo', src: [477, 317, 393, 260], glow: '#f97316' },
-      { name: 'Chuột Bóng Dịch', src: [918, 304, 349, 277], glow: '#84cc16' },
-      { name: 'Dã Thú Thiết Giáp', src: [1292, 309, 394, 268], glow: '#facc15' },
-      { name: 'Pháo Đài Gai Than', src: [27, 630, 442, 275], glow: '#fb923c' },
-      { name: 'Lõi Retro Chiến Đấu', src: [554, 637, 283, 250], glow: '#38bdf8' },
-      { name: 'Nữ Hoàng Ký Sinh', src: [1295, 634, 389, 269], glow: '#fb7185' }
+      { name: 'Cơ Giáp Thực Khuẩn', family: 'mech', color: '#38bdf8', attack: 'aimed' },
+      { name: 'Bầy Cầu Khuẩn Tím', family: 'serpent', color: '#c084fc', attack: 'split' },
+      { name: 'Rồng Sợi Lửa', family: 'serpent', color: '#fb923c', attack: 'fan' },
+      { name: 'Chúa Cúm Gai', family: 'virus', color: '#f472b6', attack: 'spread' },
+      { name: 'Bạo Chúa Roi Quẩn', family: 'virus', color: '#e879f9', attack: 'aimed' },
+      { name: 'Dã Thú Nanh Độc', family: 'beast', color: '#a3e635', attack: 'fan' },
+      { name: 'Vương Miện Corona', family: 'virus', color: '#fb923c', attack: 'split' },
+      { name: 'Xoắn Trùng Hung Bạo', family: 'serpent', color: '#f97316', attack: 'aimed' },
+      { name: 'Chuột Bóng Dịch', family: 'beast', color: '#84cc16', attack: 'split' },
+      { name: 'Dã Thú Thiết Giáp', family: 'beast', color: '#facc15', attack: 'spread' },
+      { name: 'Pháo Đài Gai Than', family: 'mech', color: '#fb923c', attack: 'fan' },
+      { name: 'Lõi Retro Chiến Đấu', family: 'mech', color: '#38bdf8', attack: 'spread' },
+      { name: 'Nữ Hoàng Ký Sinh', family: 'queen', color: '#fb7185', attack: 'split' }
     ];
 
     function spawnWave() {
@@ -96,7 +95,9 @@
         AudioEngine.bossRoar();
         const bossHp = 45 + (wave - 3) * 20;
         boss = {
-          name: bossType.name, src: bossType.src, glow: bossType.glow,
+          name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
+          variant: (wave / 3 - 1) % BOSS_TYPES.length, attackCount: 0,
+          windup: 0, hitFlash: 0,
           x: 160, y: 67,
           w: 92, h: 86,
           hp: bossHp, maxHp: bossHp,

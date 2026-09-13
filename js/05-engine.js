@@ -95,6 +95,7 @@
             b.hitTargets.add(boss);
           }
           boss.hp--;
+          boss.hitFlash = 7;
           gainUltimateCharge(); // Chỉ đạn thường bắn trúng mới nạp, tuyệt kỹ không tự nạp lại.
           AudioEngine.hit();
           createExplosion(b.x, b.y, '#84cc16', 2);
@@ -150,19 +151,8 @@
         document.getElementById('boss-hp').textContent = `${boss.hp}/${boss.maxHp}`;
         document.getElementById('boss-bar').style.width = `${Math.max(0, boss.hp / boss.maxHp * 100)}%`;
       }
-      // Boss ra đòn
-      if (boss) {
-        boss.x += boss.vx * enemyTimeScale;
-        if (boss.x < 55 || boss.x > canvas.width - 55) boss.vx *= -1;
-
-        boss.shootCooldown -= enemyTimeScale;
-        if (boss.shootCooldown <= 0) {
-          boss.shootCooldown = 42;
-          enemyBullets.push({ type: 'needle', x: boss.x - 14, y: boss.y + 20, vx: -1.0, vy: 3.2 });
-          enemyBullets.push({ type: 'split',  x: boss.x,      y: boss.y + 20, vx: 0,    vy: 2.5, splitTimer: 40 });
-          enemyBullets.push({ type: 'needle', x: boss.x + 14, y: boss.y + 20, vx: 1.0,  vy: 3.2 });
-        }
-      }
+      // Boss tự di chuyển, báo hiệu và chọn kiểu bắn theo họ (js/04-bosses.js).
+      if (boss) updateBoss(boss, enemyTimeScale);
 
       // Vi khuẩn thường xả đạn
       if (!boss && Math.random() < 0.035 * enemyTimeScale && enemies.length > 0) {
