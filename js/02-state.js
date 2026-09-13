@@ -59,6 +59,10 @@
     ];
 
     function spawnWave() {
+      // Chuyển wave hoặc chơi lại wave sau khi quái vượt tuyến:
+      // xóa toàn bộ đạn cũ, giữ powerUps để vẫn nhặt được vật phẩm boss rơi.
+      bullets = [];
+      enemyBullets = [];
       enemies = [];
       boss = null;
 
