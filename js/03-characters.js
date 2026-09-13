@@ -176,6 +176,7 @@
       } else {
         descEl.innerHTML = "🧪 <strong>Cán Bộ Khử Khuẩn:</strong> Bắn ra <strong>Bong Bóng Xà Phòng Diệt Khuẩn</strong> bay xa chạm nóc màn hình, ăn bonus để tăng số lượng bong bóng!";
       }
+      updateUltimateHud();
       AudioEngine.beep(600, 0.04);
     }
 

@@ -16,3 +16,8 @@
       font-family: 'Be Vietnam Pro', sans-serif;
     }
     .pixel-font { font-family: 'VT323', monospace; }
+
+/* Thanh nạp: khi chưa đủ 100% nút mờ; khi đầy sáng rõ để dễ nhận biết. */
+.ultimate-button:disabled { opacity: .4; cursor: not-allowed; filter: grayscale(.6); }
+.ultimate-button:not(:disabled) { box-shadow: 0 0 16px rgba(34, 211, 238, .7); animation: ultimate-pulse 1.4s ease-in-out infinite; }
+@keyframes ultimate-pulse { 50% { box-shadow: 0 0 25px rgba(34, 211, 238, 1); } }

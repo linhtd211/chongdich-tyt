@@ -16,6 +16,19 @@
       enemies.splice(index, 1);
     }
 
+    // Boss có thể bị hạ bởi đạn thường hoặc tuyệt kỹ. Chỉ ghi điểm/rơi vật phẩm một lần.
+    function defeatBoss() {
+      if (!boss || boss.hp > 0) return;
+      const downed = boss;
+      AudioEngine.explode();
+      createExplosion(downed.x, downed.y, '#84cc16', 45);
+      score += 400;
+      document.getElementById('score-text').innerText = score;
+      powerUps.push({ x: downed.x - 8, y: downed.y, w: 16, h: 18, vy: 1.4, color: '#facc15' });
+      createImmunityShockwave(downed.x, downed.y);
+      boss = null;
+    }
+
     // Điều Dưỡng: khi đạn trúng, các quái trong phạm vi 30px nhận 1 sát thương.
     function applyNurseSplash(x, y, directTarget) {
       const nearby = enemies.filter(e => e !== directTarget && Math.hypot(e.x - x, e.y - y) <= 30);
@@ -40,6 +53,8 @@
       if (player.shootCooldown > 0) player.shootCooldown--;
       if (player.invincibleTime > 0) player.invincibleTime--;
       if (player.shieldTime > 0) player.shieldTime--;
+      tickUltimate();
+      const enemyTimeScale = stormTicks > 0 ? 0.35 : 1;
       if (noticeTicks > 0 && --noticeTicks === 0) document.getElementById('wave-notice').classList.add('hidden');
       const shieldHud = document.getElementById('shield-hud');
       shieldHud.classList.toggle('hidden', player.shieldTime <= 0);
@@ -80,6 +95,7 @@
             b.hitTargets.add(boss);
           }
           boss.hp--;
+          gainUltimateCharge(); // Chỉ đạn thường bắn trúng mới nạp, tuyệt kỹ không tự nạp lại.
           AudioEngine.hit();
           createExplosion(b.x, b.y, '#84cc16', 2);
 
@@ -87,19 +103,7 @@
             bullets.splice(i, 1);
           }
 
-          if (boss.hp <= 0) {
-            AudioEngine.explode();
-            createExplosion(boss.x, boss.y, '#84cc16', 45);
-            score += 400;
-            document.getElementById('score-text').innerText = score;
-
-            powerUps.push({
-              x: boss.x - 8, y: boss.y,
-              w: 16, h: 18, vy: 1.4, color: '#facc15'
-            });
-            createImmunityShockwave(boss.x, boss.y);
-            boss = null;
-          }
+          defeatBoss();
           continue;
         }
 
@@ -117,6 +121,7 @@
               b.hitTargets.add(e);
             }
             e.hp--;
+            gainUltimateCharge();
             AudioEngine.hit();
 
             if (b.hero === 'nurse') {
@@ -147,10 +152,10 @@
       }
       // Boss ra đòn
       if (boss) {
-        boss.x += boss.vx;
+        boss.x += boss.vx * enemyTimeScale;
         if (boss.x < 40 || boss.x > canvas.width - 40) boss.vx *= -1;
 
-        boss.shootCooldown--;
+        boss.shootCooldown -= enemyTimeScale;
         if (boss.shootCooldown <= 0) {
           boss.shootCooldown = 42;
           enemyBullets.push({ type: 'needle', x: boss.x - 14, y: boss.y + 20, vx: -1.0, vy: 3.2 });
@@ -160,7 +165,7 @@
       }
 
       // Vi khuẩn thường xả đạn
-      if (!boss && Math.random() < 0.035 && enemies.length > 0) {
+      if (!boss && Math.random() < 0.035 * enemyTimeScale && enemies.length > 0) {
         const shooters = enemies.filter(en => en && en.shootType);
         if (shooters.length > 0) {
           const s = shooters[Math.floor(Math.random() * shooters.length)];
@@ -187,12 +192,12 @@
           const targetCenter = player.x + 16;
           if (eb.x < targetCenter - 4) eb.vx = Math.min(1.6, (eb.vx || 0) + 0.08);
           else if (eb.x > targetCenter + 4) eb.vx = Math.max(-1.6, (eb.vx || 0) - 0.08);
-          eb.x += eb.vx;
-          eb.y += eb.vy;
+          eb.x += eb.vx * enemyTimeScale;
+          eb.y += eb.vy * enemyTimeScale;
         } else if (eb.type === 'split') {
-          eb.x += eb.vx || 0;
-          eb.y += eb.vy;
-          eb.splitTimer--;
+          eb.x += (eb.vx || 0) * enemyTimeScale;
+          eb.y += eb.vy * enemyTimeScale;
+          eb.splitTimer -= enemyTimeScale;
           if (eb.splitTimer <= 0) {
             enemyBullets.splice(i, 1);
             enemyBullets.push({ type: 'drip', x: eb.x, y: eb.y, vx: -1.2, vy: 2.8 });
@@ -202,8 +207,8 @@
             continue;
           }
         } else {
-          eb.x += eb.vx || 0;
-          eb.y += eb.vy;
+          eb.x += (eb.vx || 0) * enemyTimeScale;
+          eb.y += eb.vy * enemyTimeScale;
         }
 
         if (player.shieldTime > 0 && Math.hypot(eb.x - (player.x + 16), eb.y - (player.y + 18)) < 34) {
@@ -259,7 +264,7 @@
         let hitWall = false;
         for (let e of enemies) {
           if (!e) continue;
-          e.x += enemyDir * enemySpeedX;
+          e.x += enemyDir * enemySpeedX * enemyTimeScale;
           if (e.x < e.radius + 2 || e.x > canvas.width - e.radius - 2) hitWall = true;
         }
 
@@ -387,6 +392,7 @@
       }
 
       drawPlayer(player.x, player.y);
+      renderUltimate();
 
     }
 
@@ -439,6 +445,8 @@
         document.getElementById('boss-hud').classList.add('hidden');
         document.getElementById('shield-hud').classList.add('hidden');
         document.getElementById('wave-notice').classList.add('hidden');
+        updateUltimateHud();
+        document.getElementById('ultimate-effect').textContent = '';
         document.getElementById('final-score').innerText = score;
         document.getElementById('gameover-screen').classList.remove('hidden');
       }

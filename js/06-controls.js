@@ -32,6 +32,7 @@
       const k = e.key.toLowerCase();
       if (['arrowleft','arrowright','arrowup','arrowdown',' ','enter'].includes(k)) e.preventDefault();
       if ((k === 'p' || k === 'escape') && !e.repeat) { togglePause(); return; }
+      if (k === 'b' && !e.repeat) { activateUltimate(); return; }
       if (!isPaused && !isGameOver && document.getElementById('char-select-screen').classList.contains('hidden')) {
         AudioEngine.init();
         heldKeys.add(k);
@@ -63,6 +64,7 @@
       isPaused = !isPaused;
       document.getElementById('pause-screen').classList.toggle('hidden', !isPaused);
       document.getElementById('pause-button').textContent = isPaused ? '▶ Tiếp tục' : '⏸ Tạm dừng';
+      updateUltimateHud();
       if (isPaused) {
         isTouching = false;
         heldKeys.clear();
@@ -99,6 +101,8 @@
       enemyDir = 1;
       enemySpeedX = 0.7;
       noticeTicks = 0;
+      resetUltimate();
+      document.getElementById('ultimate-effect').textContent = '';
       document.getElementById('pause-screen').classList.add('hidden');
       document.getElementById('pause-button').textContent = '⏸ Tạm dừng';
       document.getElementById('shield-hud').classList.add('hidden');
@@ -135,6 +139,7 @@
       }
       document.getElementById('gameover-screen').classList.add('hidden');
       document.getElementById('char-select-screen').classList.remove('hidden');
+      updateUltimateHud();
       renderPreviews();
     }
 
