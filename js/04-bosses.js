@@ -167,6 +167,16 @@ function drawBoss(b) {
   else if (b.family === 'beast') drawBeastBoss(b, t, blink);
   else if (b.family === 'queen') drawQueenBoss(b, t, blink);
   else drawVirusBoss(b, t, blink);
+  if (b.phase === 2) {
+    // Pha hai chỉ vẽ một vòng hào quang, tránh tạo particle mới mỗi frame.
+    ctx.strokeStyle = `rgba(251, 113, 133, ${.45 + .2 * Math.sin(t * 7)})`;
+    ctx.lineWidth = b.phaseTransition > 0 ? 5 : 2.5;
+    ctx.beginPath(); ctx.arc(0, 0, 53 + Math.sin(t * 5) * 2, 0, Math.PI * 2); ctx.stroke();
+    if (b.phaseTransition > 0) {
+      ctx.fillStyle = '#fff7ed'; ctx.textAlign = 'center';
+      ctx.font = 'bold 13px sans-serif'; ctx.fillText('PHA 2!', 0, -58);
+    }
+  }
   if (b.hitFlash > 0) {
     ctx.globalAlpha = b.hitFlash / 10;
     bossOval(0, 0, 30, 28, '#fff', '#fff');
@@ -254,9 +264,32 @@ function fireBossAttack(b) {
   }
 }
 
+// Chuyển pha đúng một lần ở 50% máu: dọn đạn cũ để người chơi có khoảng né,
+// hủy chiêu đang nạp và dành 75 tick cho cảnh báo trước khi boss đánh tiếp.
+function beginBossPhaseTwo(b) {
+  b.phase = 2;
+  b.phaseTransition = 75;
+  b.windup = 0;
+  b.specialShots = null;
+  b.specialName = '';
+  enemyBullets = [];
+  const warning = document.getElementById('boss-attack-warning');
+  warning.textContent = '⚠ PHA 2 · Boss tăng tốc, dùng chiêu riêng thường xuyên hơn!';
+  warning.classList.remove('hidden');
+}
+
 function updateBoss(b, timeScale) {
+  if (b.phase === 1 && b.hp <= b.maxHp / 2) beginBossPhaseTwo(b);
+  if (b.phaseTransition > 0) {
+    b.phaseTransition = Math.max(0, b.phaseTransition - timeScale);
+    if (b.phaseTransition === 0) {
+      document.getElementById('boss-attack-warning').classList.add('hidden');
+      b.shootCooldown = 45;
+    }
+    return;
+  }
   // Khóa vị trí khi báo chiêu để đường đạn thực tế luôn theo đúng vạch cảnh báo.
-  if (!b.specialShots) b.x += b.vx * timeScale;
+  if (!b.specialShots) b.x += b.vx * timeScale * (b.phase === 2 ? 1.2 : 1);
   if (b.x < 55) { b.x = 55; b.vx = Math.abs(b.vx); }
   else if (b.x > canvas.width - 55) { b.x = canvas.width - 55; b.vx = -Math.abs(b.vx); }
   if (b.hitFlash > 0) b.hitFlash--;
@@ -270,20 +303,20 @@ function updateBoss(b, timeScale) {
         b.specialName = '';
         b.attackCount++;
         document.getElementById('boss-attack-warning').classList.add('hidden');
-        b.shootCooldown = 85; // Sau chiêu riêng có nhịp nghỉ cho người chơi né.
+        b.shootCooldown = b.phase === 2 ? 70 : 85; // Vẫn có nhịp nghỉ sau chiêu.
       } else {
         fireBossAttack(b);
-        b.shootCooldown = 55 + (b.variant % 3) * 10;
+        b.shootCooldown = (55 + (b.variant % 3) * 10) * (b.phase === 2 ? .85 : 1);
       }
     }
   } else {
     b.shootCooldown -= timeScale;
     if (b.shootCooldown <= 0) {
-      if ((b.attackCount + 1) % 3 === 0) {
+      if ((b.attackCount + 1) % (b.phase === 2 ? 2 : 3) === 0) {
         const special = buildBossSpecial(b);
         b.specialShots = special.shots;
         b.specialName = special.name;
-        b.windup = 65; // Hơn 1 giây báo trước chiêu riêng.
+        b.windup = b.phase === 2 ? 60 : 65; // Pha hai vẫn báo trước đủ 1 giây.
         const warning = document.getElementById('boss-attack-warning');
         warning.textContent = `⚠ Sắp ra chiêu: ${special.name} · né khỏi vạch vàng!`;
         warning.classList.remove('hidden');

@@ -144,16 +144,18 @@
         }
       }
 
-      // Hiển thị lượng máu boss và báo hiệu trước khi vào màn boss.
+      // Boss cập nhật pha và nhịp đánh, rồi mới cập nhật thanh máu để HUD không trễ.
+      if (boss) updateBoss(boss, enemyTimeScale);
+      // Hiển thị lượng máu boss và pha hiện tại.
       const bossHud = document.getElementById('boss-hud');
       bossHud.classList.toggle('hidden', !boss);
       if (boss) {
         document.getElementById('boss-name').textContent = boss.name;
+        document.getElementById('boss-phase').textContent = `PHA ${boss.phase}`;
         document.getElementById('boss-hp').textContent = `${boss.hp}/${boss.maxHp}`;
         document.getElementById('boss-bar').style.width = `${Math.max(0, boss.hp / boss.maxHp * 100)}%`;
+        document.getElementById('boss-bar').style.backgroundColor = boss.phase === 2 ? '#f97316' : '';
       }
-      // Boss tự di chuyển, báo hiệu và chọn kiểu bắn theo họ (js/04-bosses.js).
-      if (boss) updateBoss(boss, enemyTimeScale);
 
       // Vi khuẩn thường xả đạn
       if (!boss && Math.random() < 0.035 * enemyTimeScale && enemies.length > 0) {

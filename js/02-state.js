@@ -98,6 +98,7 @@
           name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
           variant: (wave / 3 - 1) % BOSS_TYPES.length, attackCount: 2,
           windup: 0, windupTotal: 0, specialShots: null, specialName: '', hitFlash: 0,
+          phase: 1, phaseTransition: 0,
           x: 160, y: 67,
           w: 92, h: 86,
           hp: bossHp, maxHp: bossHp,
