@@ -393,6 +393,7 @@
 
       drawPlayer(player.x, player.y);
       renderUltimate();
+      positionUltimateButton();
 
     }
 
