@@ -16,7 +16,7 @@
       enemies.splice(index, 1);
     }
 
-    // Boss có thể bị hạ bởi đạn thường hoặc tuyệt kỹ. Chỉ ghi điểm/rơi vật phẩm một lần.
+    // Boss có thể bị hạ bởi đạn thường hoặc tuyệt kỹ; chỉ mở chọn thưởng một lần.
     function defeatBoss() {
       if (!boss || boss.hp > 0) return;
       const downed = boss;
@@ -24,10 +24,10 @@
       createExplosion(downed.x, downed.y, '#84cc16', 45);
       score += 400;
       document.getElementById('score-text').innerText = score;
-      powerUps.push({ x: downed.x - 8, y: downed.y, w: 16, h: 18, vy: 1.4, color: '#facc15' });
       createImmunityShockwave(downed.x, downed.y);
       boss = null;
       document.getElementById('boss-attack-warning').classList.add('hidden');
+      showBossReward(downed);
     }
 
     // Điều Dưỡng: khi đạn trúng, các quái trong phạm vi 30px nhận 1 sát thương.
@@ -42,7 +42,7 @@
     }
 
     function update() {
-      if (isGameOver || isPaused || bossIntroActive) return;
+      if (isGameOver || isPaused || bossIntroActive || bossRewardActive) return;
 
       player.x += (player.targetX - player.x) * 0.35;
       player.y += (player.targetY - player.y) * 0.35;
@@ -144,6 +144,10 @@
         }
       }
 
+      // Hạ boss trong vòng xử lý đạn: chặn mọi đạn/quái/vật phẩm và qua wave
+      // cho tới khi người chơi chọn xong phần thưởng.
+      if (bossRewardActive) return;
+
       // Boss cập nhật pha và nhịp đánh, rồi mới cập nhật thanh máu để HUD không trễ.
       if (boss) updateBoss(boss, enemyTimeScale);
       // Hiển thị lượng máu boss và pha hiện tại.
@@ -221,6 +225,8 @@
 
         if (eb.y > canvas.height + 15) enemyBullets.splice(i, 1);
       }
+      // Hết máu thì không nhặt vật phẩm/qua wave sau khi takeHit() đã mở kết quả.
+      if (isGameOver) return;
 
       // Lấy vắc xin
       for (let i = powerUps.length - 1; i >= 0; i--) {
@@ -257,6 +263,8 @@
         let hitWall = false;
         for (let e of enemies) {
           if (!e) continue;
+          // Chuyển động lính theo nhịp mô phỏng 60Hz, không phụ thuộc màn 120Hz.
+          e.animTimer += .045 * enemyTimeScale;
           e.x += enemyDir * enemySpeedX * enemyTimeScale;
           if (e.x < e.radius + 2 || e.x > canvas.width - e.radius - 2) hitWall = true;
         }
@@ -367,7 +375,7 @@
         if (pu) drawPowerUp(pu);
       }
 
-      // BỌC KIỂM TRA TRÁNH CRASH TẠI DÒNG VẼ QUÁI
+      // Hình lính vẽ trong 04-enemy-sprites.js; logic HP/đạn vẫn theo e.type.
       for (let e of enemies) {
         if (!e || !e.type) continue;
         if (e.type === 'bean_yellow') drawBeanYellow(e);
@@ -394,14 +402,20 @@
       if (isPaused || isGameOver) return;
       // Trong lúc đọc giới thiệu, dừng mô phỏng và không vẽ liên tục để tiết kiệm pin.
       if (bossIntroActive) { animationId = null; return; }
+      if (bossRewardActive) { animationId = null; return; }
       if (!lastFrameTime) lastFrameTime = time;
       accumulatedTime = Math.min(accumulatedTime + Math.min(time - lastFrameTime, 250), STEP_MS * 5);
       lastFrameTime = time;
       let steps = 0;
-      while (accumulatedTime >= STEP_MS && !isGameOver && !isPaused) {
+      while (accumulatedTime >= STEP_MS && !isGameOver && !isPaused && !bossRewardActive) {
         update();
         accumulatedTime -= STEP_MS;
         steps++;
+      }
+      if (bossRewardActive) {
+        render(); // Vẽ khung hạ boss một lần, sau đó dừng hẳn vòng chơi.
+        animationId = null;
+        return;
       }
       if (!isGameOver && !isPaused) {
         if (steps > 0) render();
@@ -435,6 +449,8 @@
         shockwaves = [];
         enemies = [];
         boss = null;
+        bossRewardActive = false;
+        document.getElementById('boss-reward-screen').classList.add('hidden');
         document.getElementById('boss-attack-warning').classList.add('hidden');
         isTouching = false;
 

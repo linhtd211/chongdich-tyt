@@ -1,4 +1,5 @@
-/* VŨ KHÍ & HÌNH QUÁI: shootBullet quyết định số đạn, độ lan và thời gian bắn; các hàm draw... vẽ vi khuẩn, boss, vật phẩm và hiệu ứng.
+/* VŨ KHÍ & HIỆU ỨNG: shootBullet quyết định số đạn, độ lan và thời gian bắn;
+   phần dưới vẽ lọ vắc xin và hiệu ứng. Lính được vẽ ở 04-enemy-sprites.js.
    Các tệp JS phải được nạp đúng thứ tự khai báo trong index.html. */
     // --- 4. HỆ THỐNG ĐẠN ---
     function shootBullet() {
@@ -69,91 +70,9 @@
       }
     }
 
-    // --- 5. VI KHUẨN & BOSS ---
-    function drawBeanYellow(e) {
-      e.animTimer += 0.05;
-      ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(Math.sin(e.animTimer) * 0.15);
-      ctx.fillStyle = '#facc15'; ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(-10, -12); ctx.bezierCurveTo(8, -14, 14, -2, 10, 10);
-      ctx.bezierCurveTo(6, 16, -6, 14, -10, 4); ctx.bezierCurveTo(-14, -2, -14, -8, -10, -12);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#1e3a8a';
-      [[-12, -4], [-8, 12], [8, -12], [11, 4]].forEach(s => {
-        ctx.beginPath(); ctx.arc(s[0], s[1], 1.8, 0, Math.PI * 2); ctx.fill();
-      });
-      ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(2, -4, 2.5, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.arc(-2, 6, 1.5, 0, Math.PI * 2); ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawRodRed(e) {
-      e.animTimer += 0.05;
-      ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(-0.25 + Math.sin(e.animTimer) * 0.1);
-      ctx.fillStyle = '#ef4444'; ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.rect(-14, -6, 28, 12);
-      ctx.fill(); ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawWormPink(e) {
-      e.animTimer += 0.08;
-      const t = e.animTimer;
-      ctx.save(); ctx.translate(e.x, e.y);
-      ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 6; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(-6, -12);
-      ctx.bezierCurveTo(4, -6 + Math.sin(t) * 3, -8, 4 + Math.sin(t) * 3, 4, 12); ctx.stroke();
-      ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 3.2;
-      ctx.beginPath(); ctx.moveTo(-6, -12);
-      ctx.bezierCurveTo(4, -6 + Math.sin(t) * 3, -8, 4 + Math.sin(t) * 3, 4, 12); ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawPinkTentacle(e) {
-      e.animTimer += 0.05;
-      const t = e.animTimer;
-      ctx.save(); ctx.translate(e.x, e.y);
-      ctx.strokeStyle = '#a21caf'; ctx.lineWidth = 2.5;
-      [-2.6, -1.8, -0.9, 0, 0.9, 1.8, 2.6].forEach((ang, i) => {
-        const len = e.radius + 7 + Math.sin(t * 3 + i) * 2.5;
-        const tx = Math.cos(ang) * len, ty = Math.sin(ang) * len;
-        ctx.beginPath(); ctx.moveTo(Math.cos(ang) * (e.radius - 2), Math.sin(ang) * (e.radius - 2)); ctx.lineTo(tx, ty); ctx.stroke();
-        ctx.fillStyle = '#c026d3'; ctx.beginPath(); ctx.arc(tx, ty, 3.5, 0, Math.PI * 2); ctx.fill();
-      });
-      ctx.fillStyle = '#d946ef'; ctx.beginPath(); ctx.ellipse(0, 0, e.radius * 1.1, e.radius * 0.9, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-4, -4, 4, 0, Math.PI * 2); ctx.arc(4, -4, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.arc(-3, -4, 2, 0, Math.PI * 2); ctx.arc(3, -4, 2, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(-8, -9); ctx.lineTo(0, -6); ctx.lineTo(8, -9); ctx.stroke();
-      ctx.fillStyle = '#701a75'; ctx.beginPath(); ctx.arc(0, 4, 6, 0.2, Math.PI - 0.2); ctx.fill();
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(-3, 3, 2.5, 2.5); ctx.fillRect(1, 3, 2.5, 2.5);
-      ctx.restore();
-    }
-
-    function drawHairyCyan(e) {
-      e.animTimer += 0.05;
-      const t = e.animTimer;
-      ctx.save(); ctx.translate(e.x, e.y);
-      ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1;
-      for (let i = 0; i < 28; i++) {
-        const ang = (i / 28) * Math.PI * 2;
-        const hLen = e.radius + 3 + (i % 2 === 0 ? 2 : 0) + Math.sin(t * 4 + i) * 1.5;
-        ctx.beginPath(); ctx.moveTo(Math.cos(ang) * (e.radius - 1), Math.sin(ang) * (e.radius - 1)); ctx.lineTo(Math.cos(ang) * hLen, Math.sin(ang) * hLen); ctx.stroke();
-      }
-      ctx.fillStyle = '#22d3ee'; ctx.strokeStyle = '#0891b2'; ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(0, -e.radius * 1.1);
-      ctx.bezierCurveTo(e.radius * 1.2, -e.radius * 0.4, e.radius * 1.1, e.radius * 0.9, 0, e.radius * 1.05);
-      ctx.bezierCurveTo(-e.radius * 1.1, e.radius * 0.9, -e.radius * 1.2, -e.radius * 0.4, 0, -e.radius * 1.1);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-4, -3, 4.5, 0, Math.PI * 2); ctx.arc(4, -1, 3.8, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#065f46'; ctx.beginPath(); ctx.arc(-3.5, -3, 2.2, 0, Math.PI * 2); ctx.arc(4.5, -1, 1.9, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-7, -8); ctx.lineTo(-2, -6); ctx.moveTo(2, -5); ctx.lineTo(7, -6); ctx.stroke();
-      ctx.fillStyle = '#854d0e'; ctx.fillRect(-7, 4, 14, 6);
-      ctx.fillStyle = '#fef08a'; ctx.fillRect(-5, 4, 2, 2.5); ctx.fillRect(0, 4, 2, 2.5); ctx.fillRect(3, 4, 2, 2.5);
-      ctx.restore();
-    }
+    // --- 5. SPRITE LÍNH ---
+    // Nét vẽ và hoạt ảnh đã chuyển sang 04-enemy-sprites.js.
+    // Đổi màu/biến thể ở ENEMY_TYPES (02-state.js), không cần sửa logic vũ khí.
 
     function drawPowerUp(p) {
       ctx.fillStyle = '#ffffff';
@@ -180,4 +99,3 @@
     function createImmunityShockwave(x, y) {
       shockwaves.push({ x: x, y: y, radius: 5, alpha: 1.0 });
     }
-

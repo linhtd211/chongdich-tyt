@@ -11,7 +11,7 @@
     }
 
     canvas.addEventListener('pointerdown', e => {
-      if (isPaused || isGameOver || bossIntroActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
+      if (isPaused || isGameOver || bossIntroActive || bossRewardActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
       // Chỉ ngón chạm canvas đầu tiên được điều khiển nhân vật.
       e.preventDefault();
       if (movementPointerId !== null) return;
@@ -53,6 +53,13 @@
     window.addEventListener('keydown', e => {
       const k = e.key.toLowerCase();
       if (['arrowleft','arrowright','arrowup','arrowdown',' ','enter'].includes(k)) e.preventDefault();
+      if (bossRewardActive) {
+        if (k === '1' || k === '2') {
+          e.preventDefault();
+          if (!e.repeat) chooseBossReward(k === '1' ? 'attack' : 'defense');
+        }
+        return;
+      }
       if (bossIntroActive) {
         if ((k === 'enter' || k === ' ') && !e.repeat) closeBossIntro();
         return;
@@ -71,7 +78,7 @@
       heldKeys.clear();
       isTouching = false;
       movementPointerId = null;
-      if (!isPaused && !isGameOver && !bossIntroActive && document.getElementById('char-select-screen').classList.contains('hidden')) togglePause();
+      if (!isPaused && !isGameOver && !bossIntroActive && !bossRewardActive && document.getElementById('char-select-screen').classList.contains('hidden')) togglePause();
     });
 
     // Được gọi 60 lần/giây từ vòng game; 3px mỗi bước ≈ 180px/giây.
@@ -87,7 +94,7 @@
     }
 
     function togglePause() {
-      if (isGameOver || bossIntroActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
+      if (isGameOver || bossIntroActive || bossRewardActive || !document.getElementById('char-select-screen').classList.contains('hidden')) return;
       isPaused = !isPaused;
       document.getElementById('pause-screen').classList.toggle('hidden', !isPaused);
       document.getElementById('pause-button').textContent = isPaused ? '▶ Tiếp tục' : '⏸ Tạm dừng';
@@ -121,6 +128,8 @@
       shockwaves = [];
       enemies = [];
       boss = null;
+      bossRewardActive = false;
+      document.getElementById('boss-reward-screen').classList.add('hidden');
       isTouching = false;
       movementPointerId = null;
       heldKeys.clear();
@@ -175,6 +184,8 @@
       document.getElementById('char-select-screen').classList.remove('hidden');
       bossIntroActive = false;
       document.getElementById('boss-intro-screen').classList.add('hidden');
+      bossRewardActive = false;
+      document.getElementById('boss-reward-screen').classList.add('hidden');
       updateUltimateHud();
       document.getElementById('boss-attack-warning').classList.add('hidden');
       renderPreviews();

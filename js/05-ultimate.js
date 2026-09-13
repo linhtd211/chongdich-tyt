@@ -18,7 +18,7 @@ function updateUltimateHud() {
   label.textContent = names[selectedHero];
   bar.style.width = `${ultimateCharge}%`;
   charge.textContent = `${ultimateCharge}%`;
-  const available = ultimateCharge === 100 && !isPaused && !isGameOver &&
+  const available = ultimateCharge === 100 && !isPaused && !isGameOver && !bossRewardActive &&
     document.getElementById('char-select-screen').classList.contains('hidden');
   // Không dùng thuộc tính disabled: nút nhận ngón thứ hai kể cả lúc chưa đủ nạp.
   btn.setAttribute('aria-disabled', String(!available));
@@ -41,7 +41,7 @@ function resetUltimate() {
 }
 
 function activateUltimate() {
-  if (ultimateCharge < 100 || isPaused || isGameOver || bossIntroActive ||
+  if (ultimateCharge < 100 || isPaused || isGameOver || bossIntroActive || bossRewardActive ||
       !document.getElementById('char-select-screen').classList.contains('hidden')) return false;
   AudioEngine.init();
   ultimateCharge = 0;

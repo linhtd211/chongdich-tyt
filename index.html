@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.8.1 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.10.0 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -69,6 +69,27 @@
       <a id="boss-intro-source" href="#" target="_blank" rel="noopener noreferrer" class="inline-block text-sky-300 underline text-xs mt-3">Xem nguồn y tế ↗</a>
       <p class="text-[10px] text-slate-400 mt-3">Thông tin để tìm hiểu, không dùng để chẩn đoán.</p>
       <button type="button" onclick="closeBossIntro()" class="block mx-auto mt-4 rounded-xl bg-gradient-to-r from-rose-600 to-orange-500 border border-rose-200 px-8 py-3 pixel-font text-3xl active:scale-95">▶ BẮT ĐẦU ĐẤU BOSS</button>
+    </div>
+  </div>
+
+  <!-- CHỌN THƯỞNG SAU BOSS: đứng trận cho đến khi chọn 1 trong 2. -->
+  <div id="boss-reward-screen" class="hidden absolute inset-0 z-40 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center" role="dialog" aria-modal="true" aria-labelledby="reward-title">
+    <div class="w-full max-w-sm rounded-3xl border-2 border-amber-400/70 bg-slate-900/95 p-5 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+      <div class="pixel-font text-2xl text-emerald-300">CHIẾN THẮNG BOSS</div>
+      <h2 id="reward-title" class="pixel-font text-4xl text-amber-300">CHỌN PHẦN THƯỞNG</h2>
+      <p id="reward-boss-name" class="text-rose-300 font-bold text-sm mt-1"></p>
+      <p class="text-slate-300 text-xs mt-2 mb-4">Chọn một nâng cấp để sang wave tiếp theo</p>
+      <div class="grid gap-3">
+        <button id="reward-attack" type="button" class="text-left rounded-2xl border-2 border-sky-400 bg-sky-950/80 p-4 active:scale-95">
+          <strong class="block text-sky-200 text-lg">💉 1 · NÂNG CẤP VŨ KHÍ</strong>
+          <span id="reward-attack-detail" class="block text-sm text-slate-200 mt-1"></span>
+        </button>
+        <button id="reward-defense" type="button" class="text-left rounded-2xl border-2 border-emerald-400 bg-emerald-950/80 p-4 active:scale-95">
+          <strong class="block text-emerald-200 text-lg">🛡 2 · HỒI PHỤC & BẢO VỆ</strong>
+          <span id="reward-defense-detail" class="block text-sm text-slate-200 mt-1"></span>
+        </button>
+      </div>
+      <p class="text-slate-400 text-xs mt-3">Chạm lựa chọn hoặc nhấn phím 1 / 2</p>
     </div>
   </div>
 
@@ -142,10 +163,12 @@
   <script src="js/02-state.js"></script>
   <script src="js/03-characters.js"></script>
   <script src="js/04-weapons-enemies.js"></script>
+  <script src="js/04-enemy-sprites.js"></script>
   <script src="js/04-bosses.js"></script>
   <script src="js/04-boss-intro.js"></script>
   <script src="js/05-ultimate.js"></script>
   <script src="js/05-results.js"></script>
+  <script src="js/05-boss-rewards.js"></script>
   <script src="js/05-engine.js"></script>
   <script src="js/06-controls.js"></script>
 </body>

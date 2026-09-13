@@ -39,6 +39,7 @@
     let shockwaves = [];
     let bloodCells = [];
     let boss = null;
+    let bossRewardActive = false;
 
     for (let i = 0; i < 14; i++) {
       bloodCells.push({
@@ -51,11 +52,12 @@
     }
 
     const ENEMY_TYPES = [
-      { type: 'bean_yellow', hp: 1, color: '#facc15', score: 10, radius: 12, shootType: 'drip' },
-      { type: 'pink_tentacle', hp: 3, color: '#d946ef', score: 35, radius: 14, shootType: 'split' },
-      { type: 'rod_red',      hp: 1, color: '#ef4444', score: 15, radius: 10, shootType: 'needle' },
-      { type: 'worm_pink',    hp: 2, color: '#f43f5e', score: 25, radius: 11, shootType: 'homing' },
-      { type: 'hairy_cyan',   hp: 4, color: '#22d3ee', score: 50, radius: 15, shootType: 'needle' }
+      // color / altColor chỉ đổi dáng và màu; hp, score, radius và shootType giữ nguyên.
+      { type: 'bean_yellow', hp: 1, color: '#facc15', altColor: '#a855f7', score: 10, radius: 12, shootType: 'drip' },
+      { type: 'pink_tentacle', hp: 3, color: '#ec4899', altColor: '#38bdf8', score: 35, radius: 14, shootType: 'split' },
+      { type: 'rod_red',      hp: 1, color: '#fb923c', altColor: '#38bdf8', score: 15, radius: 10, shootType: 'needle' },
+      { type: 'worm_pink',    hp: 2, color: '#d946ef', altColor: '#a3e635', score: 25, radius: 11, shootType: 'homing' },
+      { type: 'hairy_cyan',   hp: 4, color: '#2dd4bf', altColor: '#22c55e', score: 50, radius: 15, shootType: 'needle' }
     ];
 
     // BOSS CANVAS: 12 boss luân phiên, 5 họ hình dáng, nhiều kiểu tấn công.
@@ -77,7 +79,7 @@
 
     function spawnWave() {
       // Chuyển wave hoặc chơi lại wave sau khi quái vượt tuyến:
-      // xóa toàn bộ đạn cũ, giữ powerUps để vẫn nhặt được vật phẩm boss rơi.
+      // xóa toàn bộ đạn cũ, giữ powerUps do lính thường rơi để vẫn nhặt được.
       bullets = [];
       enemyBullets = [];
       enemies = [];
@@ -93,7 +95,10 @@
       notice.classList.remove('hidden');
       if (bossType) {
         AudioEngine.bossRoar();
-        const bossHp = 45 + (wave - 3) * 20;
+        // Mỗi 3 wave là 1 boss. Wave 3 = 45 HP, wave 36 = 267 HP (trước là 705).
+        // Chỉnh 12 và 0.75 để cân bằng tăng trưởng đầu/cuối mà không chặn vô tận.
+        const bossRank = wave / 3 - 1;
+        const bossHp = 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
         boss = {
           name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
           variant: (wave / 3 - 1) % BOSS_TYPES.length, attackCount: 2,
@@ -118,13 +123,16 @@
           else if (r === 2) type = ENEMY_TYPES[3];
           else type = (c % 2 === 0) ? ENEMY_TYPES[0] : ENEMY_TYPES[2];
 
+          // Dùng cặp cột để cả loại lính chỉ xuất hiện ở cột chẵn/lẻ
+          // cũng có đủ hai biến thể trong cùng một wave.
+          const skin = (Math.floor(c / 2) + Math.floor(wave / 2)) % 2;
           enemies.push({
             x: 24 + c * 46,
             y: 35 + r * 36,
             radius: type.radius,
             hp: type.hp, maxHp: type.hp,
-            color: type.color, score: type.score,
-            type: type.type, shootType: type.shootType,
+            color: skin ? type.altColor : type.color, score: type.score,
+            type: type.type, skin, shootType: type.shootType,
             animTimer: Math.random() * 100
           });
         }
