@@ -60,7 +60,7 @@
       { type: 'hairy_cyan',   hp: 4, color: '#2dd4bf', altColor: '#22c55e', score: 50, radius: 15, shootType: 'needle' }
     ];
 
-    // BOSS CANVAS: 12 boss luân phiên, 5 họ hình dáng, nhiều kiểu tấn công.
+    // BOSS CANVAS: 12 boss luân phiên, 12 nét vẽ riêng; family chỉ còn điều khiển đường đi.
     // Boss bệnh than được giữ lại một lần: Dã Thú Hoại Tử.
     const BOSS_TYPES = [
       { name: 'Cơ Giáp Thực Khuẩn', family: 'mech', color: '#38bdf8', attack: 'aimed' },
