@@ -1,6 +1,6 @@
 /* TUYỆT KỸ: thanh nạp, kích hoạt và hiệu ứng của ba nhân vật.
    Chỉnh ULTIMATE_CHARGE_PER_HIT, MEGA_BEAM_WIDTH, STORM_TICKS ở đây. */
-const ULTIMATE_CHARGE_PER_HIT = 4; // 25 lần bắn trúng trực tiếp để đầy thanh.
+const ULTIMATE_CHARGE_PER_HIT = 2; // v1.16.1: cần 50 lần bắn trúng để đầy thanh, kéo dài thời gian tích tuyệt kỹ.
 const MEGA_BEAM_WIDTH = 84;        // Bề rộng luồng quét của Điều Dưỡng (pixel canvas).
 const STORM_TICKS = 4 * 60;        // 4 giây ở mô phỏng 60 bước/giây.
 let ultimateCharge = 0;

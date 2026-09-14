@@ -2,6 +2,8 @@
    phần dưới vẽ lọ vắc xin và hiệu ứng. Lính được vẽ ở 04-enemy-sprites.js.
    Các tệp JS phải được nạp đúng thứ tự khai báo trong index.html. */
     // --- 4. HỆ THỐNG ĐẠN ---
+    // Cân bằng v1.16.1: giảm tốc độ và nhịp bắn của nhân vật để vi khuẩn có thêm thời gian phản công.
+    const PLAYER_PROJECTILE_SPEED_SCALE = 0.72;
     function shootBullet() {
       if (player.shootCooldown > 0) return;
 
@@ -19,14 +21,14 @@
             x: startX + k * spacing,
             y: py,
             vx: 0,
-            vy: -10,
+            vy: -10 * PLAYER_PROJECTILE_SPEED_SCALE,
             w: 3.5,
             h: 18,
             pierce: player.gunLevel >= 3 ? 2 : 1,
             color: '#14b8a6'
           });
         }
-        player.shootCooldown = 9;
+        player.shootCooldown = 12;
       }
       else if (selectedHero === 'nurse') {
         AudioEngine.shootBurst();
@@ -39,14 +41,14 @@
             hero: 'nurse',
             x: px,
             y: py,
-            vx: Math.cos(ang) * 8,
-            vy: Math.sin(ang) * 8,
+            vx: Math.cos(ang) * 8 * PLAYER_PROJECTILE_SPEED_SCALE,
+            vy: Math.sin(ang) * 8 * PLAYER_PROJECTILE_SPEED_SCALE,
             w: 6,
             h: 6,
             color: '#f43f5e'
           });
         }
-        player.shootCooldown = 11;
+        player.shootCooldown = 14;
       }
       else {
         AudioEngine.shootBubble();
@@ -60,13 +62,13 @@
             hero: 'sanitizer',
             x: startX + k * spacing,
             y: py,
-            vx: Math.sin(spreadAngle) * 7.5,
-            vy: -Math.cos(spreadAngle) * 7.5,
+            vx: Math.sin(spreadAngle) * 7.5 * PLAYER_PROJECTILE_SPEED_SCALE,
+            vy: -Math.cos(spreadAngle) * 7.5 * PLAYER_PROJECTILE_SPEED_SCALE,
             radius: 8 + (k % 2 === 0 ? 1 : 0),
             color: 'rgba(56, 189, 248, 0.65)'
           });
         }
-        player.shootCooldown = 9; // Bong bóng đi chậm hơn nhưng có vùng va chạm rộng.
+        player.shootCooldown = 12; // Bong bóng đi chậm hơn nhưng có vùng va chạm rộng.
       }
     }
 

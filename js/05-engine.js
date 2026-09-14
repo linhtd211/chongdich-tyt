@@ -1,6 +1,9 @@
 /* VÒNG CHƠI: update xử lý di chuyển, đạn, va chạm, điểm, qua màn và vẽ canvas; takeHit trừ máu và kết thúc. Đổi tốc độ quái tại enemySpeedX; đổi tỉ lệ vật phẩm tại Math.random() < 0.05.
    Các tệp JS phải được nạp đúng thứ tự khai báo trong index.html. */
     // --- 6. VÒNG LẶP ENGINE ĐÃ BỌC AN TOÀN TRÁNH TYPEERROR ---
+    // Cân bằng v1.16.1: đạn thường chỉ còn 75% sát thương; lính 1 HP cần 2 phát thay vì 1.
+    const PLAYER_BULLET_DAMAGE = 0.75;
+    const NURSE_SPLASH_DAMAGE = 0.5;
     // Hạ quái một lần duy nhất; dùng chung cho đạn trực tiếp và sát thương lan.
     function defeatEnemy(e) {
       const index = enemies.indexOf(e);
@@ -35,7 +38,7 @@
     function applyNurseSplash(x, y, directTarget) {
       const nearby = enemies.filter(e => e !== directTarget && Math.hypot(e.x - x, e.y - y) <= 30);
       for (const e of nearby) {
-        e.hp--;
+        e.hp -= NURSE_SPLASH_DAMAGE;
         createExplosion(e.x, e.y, '#fb7185', 3);
         defeatEnemy(e);
       }
@@ -101,7 +104,7 @@
           });
           if (guard) {
             const pos = finalGuardPosition(boss, guard);
-            strikeFinalGuard(boss, guard, 1, pos.x, pos.y);
+            strikeFinalGuard(boss, guard, PLAYER_BULLET_DAMAGE, pos.x, pos.y);
             gainUltimateCharge();
             bullets.splice(i, 1);
             continue;
@@ -113,7 +116,7 @@
             if (!b.hitTargets) b.hitTargets = new WeakSet();
             b.hitTargets.add(boss);
           }
-          boss.hp--;
+          boss.hp -= PLAYER_BULLET_DAMAGE;
           boss.hitFlash = 7;
           gainUltimateCharge(); // Chỉ đạn thường bắn trúng mới nạp, tuyệt kỹ không tự nạp lại.
           AudioEngine.hit();
@@ -141,7 +144,7 @@
               if (!b.hitTargets) b.hitTargets = new WeakSet();
               b.hitTargets.add(e);
             }
-            e.hp--;
+            e.hp -= PLAYER_BULLET_DAMAGE;
             gainUltimateCharge();
             AudioEngine.hit();
 
