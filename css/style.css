@@ -43,3 +43,34 @@
   border: 6px double #ac813e;
   box-shadow: inset 0 0 0 2px #f8ebc4, 0 12px 28px #0005;
 }
+
+/* v1.16.2 - GAME INPUT LOCK
+   Ngăn trình duyệt bôi đen chữ/kéo phần tử khi chơi nhưng không khóa control nhập liệu nếu bổ sung sau này. */
+html, body, #game-frame, #game-frame *, canvas,
+#char-select-screen, #char-select-screen *,
+#game-over-screen, #game-over-screen *,
+.ultimate-panel, .ultimate-panel * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+#game-frame, #gameCanvas {
+  touch-action: none !important;
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+img, canvas {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* Giữ khả năng chọn/nhập văn bản nếu game có form ở phiên bản sau. */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+  touch-action: manipulation !important;
+}

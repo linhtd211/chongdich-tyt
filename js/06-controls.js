@@ -199,3 +199,14 @@
     function restartGame() {
       openCharSelect();
     }
+
+// v1.16.2 - Chỉ chặn chọn chữ/kéo phần tử trong UI game; không can thiệp ô nhập liệu.
+(function installGameBrowserGestureGuard() {
+  const isEditable = el => !!(el && el.closest && el.closest('input, textarea, [contenteditable="true"]'));
+  document.addEventListener('selectstart', e => {
+    if (!isEditable(e.target)) e.preventDefault();
+  });
+  document.addEventListener('dragstart', e => {
+    if (!isEditable(e.target)) e.preventDefault();
+  });
+})();
