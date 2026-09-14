@@ -145,7 +145,7 @@ function beginBossPhaseTwo(b) {
   const warning = document.getElementById('boss-attack-warning');
   if (b.final) {
     summonFinalGuards(b);
-    b.guardVolleyTimer = 110;
+    b.guardVolleyTimer = 65;
   }
   warning.textContent = b.final ? '⚠ CỘT 2 · Boss gọi hộ vệ! Chúng sẽ cùng bắn sau khi hiện sáng.'
     : '⚠ PHA 2 · Boss tăng tốc, dùng chiêu riêng thường xuyên hơn!';
@@ -158,14 +158,31 @@ function beginFinalPhaseThree(b) {
   b.windup = 0; b.specialShots = null; b.specialKind = null;
   enemyBullets = []; // Khoảng thở trước pha cuối.
   b.guards = []; // Hết cột 2, boss bỏ lớp khiên để chuyển sang công kích.
+  b.melee = null;
   const warning = document.getElementById('boss-attack-warning');
   warning.textContent = '⚠ CỘT 3 · CUỒNG NỘ! Boss bỏ hộ vệ và tăng nhịp bắn.';
+  warning.classList.remove('hidden');
+}
+
+function beginSecondGuardianWave(b) {
+  b.secondGuardScheduled = true;
+  b.guards = [];
+  b.melee = null;
+  b.windup = 55;
+  b.specialShots = [];
+  b.specialKind = 'summon';
+  b.specialName = 'Hộ vệ cận chiến';
+  enemyBullets = []; // Bước chuyển rõ ràng, không chồng làn đạn đội cũ.
+  const warning = document.getElementById('boss-attack-warning');
+  warning.textContent = '⚠ LƯỢT 2 · Hộ vệ cận chiến sắp lao tới!';
   warning.classList.remove('hidden');
 }
 
 function updateBoss(b, timeScale) {
   if (b.phase === 1 && b.hp <= b.maxHp * (b.final ? 2 / 3 : 1 / 2)) beginBossPhaseTwo(b);
   if (b.final && b.phase === 2 && b.hp <= b.maxHp / 3) beginFinalPhaseThree(b);
+  if (b.final && b.phase === 2 && b.summonCount === 1 && !b.secondGuardScheduled &&
+      b.hp <= b.maxHp / 2) beginSecondGuardianWave(b);
   if (b.phaseTransition > 0) {
     b.phaseTransition = Math.max(0, b.phaseTransition - timeScale);
     if (b.phaseTransition === 0) {

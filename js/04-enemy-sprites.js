@@ -1,5 +1,5 @@
 /* HÌNH LÍNH CANVAS – lấy cảm hứng từ ảnh mẫu, không tải/cắt ảnh bên ngoài.
-   5 nhóm × 2 biến thể (skin 0/1), không đổi hitbox/HP/kiểu bắn.
+   5 nhóm × 6 biến thể = 30 mẫu lính (10 cũ + 20 mới), không đổi hitbox/HP/kiểu bắn.
    Chỉnh hình: các hàm draw... bên dưới; chỉnh màu: ENEMY_TYPES ở 02-state.js.
    animTimer tăng trong update() 60Hz, không tăng trong render() để máy 120Hz
    không khiến lính chạy hoạt ảnh nhanh gấp đôi. Giới hạn nét vẽ mỗi hình.
@@ -40,7 +40,49 @@ function soldierSpot(x, y, r, color) {
   ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
 }
 
+
+// 20 mẫu bổ sung: skin 2–5 cho 5 họ lính. Các mẫu dùng hình học Canvas nhẹ,
+// giữ nguyên hitbox/HP/kiểu bắn nên chỉ tăng độ đa dạng thị giác, không phá cân bằng.
+function drawExtraEnemySkin(e, family) {
+  const t=e.animTimer, k=e.skin-2;
+  const palettes=[
+    ['#f97316','#7c2d12','#fed7aa'], ['#8b5cf6','#4c1d95','#ddd6fe'],
+    ['#22c55e','#14532d','#bbf7d0'], ['#06b6d4','#164e63','#cffafe'],
+    ['#ef4444','#7f1d1d','#fecaca']
+  ];
+  const P=palettes[(family+k)%palettes.length], bob=Math.sin(t*1.7+k)*1.5;
+  ctx.save(); ctx.translate(e.x,e.y+bob); ctx.rotate(Math.sin(t*.8+k)*.06);
+  if(k===0){ // Giáp bào tử: thân tròn, 8 gai và các bào tử sáng.
+    for(let i=0;i<8;i++){const a=i*Math.PI/4, rr=16+Math.sin(t*2+i)*1.5;
+      soldierLine(Math.cos(a)*9,Math.sin(a)*9,Math.cos(a)*rr,Math.sin(a)*rr,P[1],2.2);
+      soldierSpot(Math.cos(a)*rr,Math.sin(a)*rr,2,P[2]);}
+    soldierOval(0,0,11.5,10.5,P[0],P[1],2); soldierSpot(-6,6,1.5,P[2]); soldierFace(0,-1,t,P[1]);
+  } else if(k===1){ // Song cầu: hai tế bào liên kết, rung lệch pha.
+    const gap=7+Math.sin(t*2)*1.2;
+    soldierOval(-gap,0,8.5,10,P[0],P[1],2); soldierOval(gap,0,8.5,10,P[2],P[1],2);
+    soldierLine(-2,-8,2,-8,P[1],1.5); soldierLine(-2,8,2,8,P[1],1.5);
+    soldierSpot(-9,-4,1.5,'#fff'); soldierSpot(9,-4,1.5,'#fff'); soldierFace(0,1,t,P[1]);
+  } else if(k===2){ // Khuẩn có roi: thân nang, 4 roi ve vẩy phía sau.
+    ctx.rotate(-.16);
+    for(let i=0;i<4;i++) soldierLine(-12,-6+i*4,-22-Math.sin(t*2+i)*4,-10+i*7,P[1],1.4);
+    soldierOval(1,0,14,8.5,P[0],P[1],2); soldierOval(5,-3,6,2,P[2],P[2],.2);
+    soldierSpot(-4,4,1.4,P[2]); soldierFace(3,-1,t,P[1]);
+  } else { // Khuẩn tinh thể: lõi đa giác với các hạt vệ tinh.
+    ctx.fillStyle=P[0];ctx.strokeStyle=P[1];ctx.lineWidth=2;ctx.beginPath();
+    for(let i=0;i<8;i++){const a=-Math.PI/2+i*Math.PI/4,rr=i%2?10:14;const x=Math.cos(a)*rr,y=Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fill();ctx.stroke();
+    for(let i=0;i<4;i++){const a=t*.45+i*Math.PI/2;soldierSpot(Math.cos(a)*18,Math.sin(a)*13,2.2,P[2]);}
+    soldierFace(0,0,t,P[1]);
+  }
+  // Dấu hiệu nhỏ theo họ giúp 20 mẫu không chỉ khác màu mà còn có "vai" riêng.
+  if(family===1){ soldierLine(-14,10,-19,16,P[1],1.4); soldierLine(14,10,19,16,P[1],1.4); }
+  if(family===2){ soldierLine(0,-12,4,-19,P[1],1.4); }
+  if(family===3){ soldierSpot(-12,-10,2.2,P[2]); soldierSpot(12,10,2.2,P[2]); }
+  if(family===4){ ctx.strokeStyle=P[2];ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.stroke(); }
+  ctx.restore();
+}
+
 function drawBeanYellow(e) {
+  if (e.skin >= 2) return drawExtraEnemySkin(e, 0);
   const t = e.animTimer;
   ctx.save();
   ctx.translate(e.x, e.y + Math.sin(t * 1.7) * 1.5);
@@ -67,6 +109,7 @@ function drawBeanYellow(e) {
 }
 
 function drawPinkTentacle(e) {
+  if (e.skin >= 2) return drawExtraEnemySkin(e, 1);
   const t = e.animTimer;
   ctx.save(); ctx.translate(e.x, e.y + Math.sin(t * 1.7) * 1.8);
   ctx.rotate(Math.sin(t * .7) * .075);
@@ -98,6 +141,7 @@ function drawPinkTentacle(e) {
 }
 
 function drawRodRed(e) {
+  if (e.skin >= 2) return drawExtraEnemySkin(e, 2);
   const t = e.animTimer;
   ctx.save(); ctx.translate(e.x, e.y + Math.sin(t * 1.4) * 1.3);
   if (e.skin === 0) { // Xoắn khuẩn cam: sống lưng lượn liên tục, mặt ở đầu trên.
@@ -129,6 +173,7 @@ function drawRodRed(e) {
 }
 
 function drawWormPink(e) {
+  if (e.skin >= 2) return drawExtraEnemySkin(e, 3);
   const t = e.animTimer;
   ctx.save(); ctx.translate(e.x, e.y + Math.sin(t * 1.5) * 1.6);
   ctx.rotate(Math.sin(t * .9) * .11);
@@ -160,6 +205,7 @@ function drawWormPink(e) {
 }
 
 function drawHairyCyan(e) {
+  if (e.skin >= 2) return drawExtraEnemySkin(e, 4);
   const t = e.animTimer;
   ctx.save(); ctx.translate(e.x, e.y + Math.sin(t * 1.5) * 1.5);
   if (e.skin === 0) { // Amip xanh với thùy cơ thể và hai tay đung đưa.

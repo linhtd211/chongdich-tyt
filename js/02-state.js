@@ -13,6 +13,8 @@
     let accumulatedTime = 0;
     let isPaused = false;
     let noticeTicks = 0;
+    let waveEntryTicks = 0; // Nhịp vào màn: quái hiện ra trước khi bắt đầu tấn công.
+    let waveClearTicks = 0; // Khoảng nghỉ ngắn sau khi dọn sạch một wave thường.
     let isGameOver = false;
     let selectedHero = 'doctor';
     let animationId = null;
@@ -90,7 +92,9 @@
       formationTick = 0;
       document.getElementById('boss-attack-warning').classList.add('hidden');
 
-      noticeTicks = 120; // Thông báo màn hiển thị 2 giây.
+      noticeTicks = 150; // Thông báo màn hiển thị 2,5 giây.
+      waveEntryTicks = 50; // ~0,83 giây chuyển cảnh trước khi đội hình bắt đầu di chuyển/bắn.
+      waveClearTicks = 0;
       const isBossWave = wave % 3 === 0;
       const bossType = isBossWave ? BOSS_TYPES[Math.min(wave / 3 - 1, BOSS_TYPES.length - 1)] : null;
       const notice = document.getElementById('wave-notice');
@@ -102,12 +106,14 @@
         // Mỗi 3 wave là 1 boss. Wave 3 = 45 HP, wave 36 = 267 HP (trước là 705).
         // Chỉnh 12 và 0.75 để cân bằng tăng trưởng đầu/cuối mà không chặn vô tận.
         const bossRank = wave / 3 - 1;
-        // Ba cột máu nối tiếp, mỗi cột 270 HP; thứ tự pha 1 → 2 → 3.
-        const bossHp = wave === 39 ? 810 : 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
+        // Ba cột máu nối tiếp, mỗi cột 600 HP; thứ tự pha 1 → 2 → 3.
+        const bossHp = wave === 39 ? 1800 : 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
         boss = {
           name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
           variant: Math.min(bossRank, BOSS_TYPES.length - 1), final: wave === 39,
-          guards: [], summonCount: 0, guardVolleyTimer: 105, attackCount: 2,
+          guards: [], summonCount: 0, guardVolleyTimer: 65,
+          melee: null, meleeCooldown: 100, meleeAttackCount: 0,
+          secondGuardScheduled: false, attackCount: 2,
           windup: 0, windupTotal: 0, specialShots: null, specialName: '', hitFlash: 0,
           phase: 1, phaseTransition: 0,
           x: 160, y: 67,
@@ -129,9 +135,9 @@
           else if (r === 2) type = ENEMY_TYPES[3];
           else type = (c % 2 === 0) ? ENEMY_TYPES[0] : ENEMY_TYPES[2];
 
-          // Dùng cặp cột để cả loại lính chỉ xuất hiện ở cột chẵn/lẻ
-          // cũng có đủ hai biến thể trong cùng một wave.
-          const skin = (Math.floor(c / 2) + Math.floor(wave / 2)) % 2;
+          // 6 skin cho mỗi họ lính: 2 mẫu gốc + 4 mẫu mới = 30 mẫu tổng cộng.
+          // Phân bố theo hàng/cột/wave để một màn có nhiều ngoại hình khác nhau.
+          const skin = (c + r * 2 + wave) % 6;
           enemies.push({
             x: 24 + c * 46,
             y: 35 + r * 36,
@@ -148,7 +154,7 @@
     }
 
     let enemyDir = 1;
-    let enemySpeedX = 0.7;
+    let enemySpeedX = 0.48;
     let formationShiftX = 0;
     let formationDropY = 0;
     let formationTick = 0;

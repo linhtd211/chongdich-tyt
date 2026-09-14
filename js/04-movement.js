@@ -64,7 +64,7 @@ function updateEnemyFormation(timeScale) {
   }
   // Mỗi ~3,7 giây, một lính hàng dưới tách đội hình, lao xuống rồi quay về.
   // Luân phiên qua các lính còn sống, không sinh thêm quái hay đạn.
-  const divePeriod = 220, diveStart = 45, diveDuration = 115;
+  const divePeriod = 300, diveStart = 60, diveDuration = 135;
   const cycle = Math.floor(formationTick / divePeriod);
   const diveTime = formationTick % divePeriod;
   const divePhase = Math.max(0, Math.min(1, (diveTime - diveStart) / diveDuration));

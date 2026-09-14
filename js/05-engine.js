@@ -57,6 +57,8 @@
       if (player.shieldTime > 0) player.shieldTime--;
       tickUltimate();
       const enemyTimeScale = stormTicks > 0 ? 0.35 : 1;
+      const hostileProjectileScale = 0.82; // Giảm tốc toàn bộ đạn địch/boss để có thời gian quan sát và né.
+      if (waveEntryTicks > 0) waveEntryTicks--;
       if (noticeTicks > 0 && --noticeTicks === 0) document.getElementById('wave-notice').classList.add('hidden');
       const shieldHud = document.getElementById('shield-hud');
       shieldHud.classList.toggle('hidden', player.shieldTime <= 0);
@@ -167,6 +169,7 @@
 
       // Boss cập nhật pha và nhịp đánh, rồi mới cập nhật thanh máu để HUD không trễ.
       if (boss) updateBoss(boss, enemyTimeScale);
+      if (isGameOver) return;
       // Hiển thị lượng máu boss và pha hiện tại.
       const bossHud = document.getElementById('boss-hud');
       bossHud.classList.toggle('hidden', !boss);
@@ -191,19 +194,19 @@
       }
 
       // Vi khuẩn thường xả đạn
-      if (!boss && Math.random() < 0.035 * enemyTimeScale && enemies.length > 0) {
+      if (!boss && waveEntryTicks <= 0 && Math.random() < 0.022 * enemyTimeScale && enemies.length > 0) {
         const shooters = enemies.filter(en => en && en.shootType);
         if (shooters.length > 0) {
           const s = shooters[Math.floor(Math.random() * shooters.length)];
           if (s) {
             if (s.shootType === 'needle') {
-              enemyBullets.push({ type: 'needle', x: s.x, y: s.y + s.radius, vx: 0, vy: 3.6 });
+              enemyBullets.push({ type: 'needle', x: s.x, y: s.y + s.radius, vx: 0, vy: 3.0 });
             } else if (s.shootType === 'homing') {
-              enemyBullets.push({ type: 'homing', x: s.x, y: s.y + s.radius, vx: 0, vy: 2.0 });
+              enemyBullets.push({ type: 'homing', x: s.x, y: s.y + s.radius, vx: 0, vy: 1.8 });
             } else if (s.shootType === 'split') {
-              enemyBullets.push({ type: 'split', x: s.x, y: s.y + s.radius, vx: 0, vy: 2.2, splitTimer: 40 });
+              enemyBullets.push({ type: 'split', x: s.x, y: s.y + s.radius, vx: 0, vy: 2.0, splitTimer: 48 });
             } else {
-              enemyBullets.push({ type: 'drip', x: s.x, y: s.y + s.radius, vx: 0, vy: 2.7 });
+              enemyBullets.push({ type: 'drip', x: s.x, y: s.y + s.radius, vx: 0, vy: 2.35 });
             }
           }
         }
@@ -216,13 +219,13 @@
 
         if (eb.type === 'homing') {
           const targetCenter = player.x + 16;
-          if (eb.x < targetCenter - 4) eb.vx = Math.min(1.6, (eb.vx || 0) + 0.08);
-          else if (eb.x > targetCenter + 4) eb.vx = Math.max(-1.6, (eb.vx || 0) - 0.08);
-          eb.x += eb.vx * enemyTimeScale;
-          eb.y += eb.vy * enemyTimeScale;
+          if (eb.x < targetCenter - 4) eb.vx = Math.min(1.25, (eb.vx || 0) + 0.065);
+          else if (eb.x > targetCenter + 4) eb.vx = Math.max(-1.25, (eb.vx || 0) - 0.065);
+          eb.x += eb.vx * enemyTimeScale * hostileProjectileScale;
+          eb.y += eb.vy * enemyTimeScale * hostileProjectileScale;
         } else if (eb.type === 'split') {
-          eb.x += (eb.vx || 0) * enemyTimeScale;
-          eb.y += eb.vy * enemyTimeScale;
+          eb.x += (eb.vx || 0) * enemyTimeScale * hostileProjectileScale;
+          eb.y += eb.vy * enemyTimeScale * hostileProjectileScale;
           eb.splitTimer -= enemyTimeScale;
           if (eb.splitTimer <= 0) {
             enemyBullets.splice(i, 1);
@@ -233,8 +236,8 @@
             continue;
           }
         } else {
-          eb.x += (eb.vx || 0) * enemyTimeScale;
-          eb.y += eb.vy * enemyTimeScale;
+          eb.x += (eb.vx || 0) * enemyTimeScale * hostileProjectileScale;
+          eb.y += eb.vy * enemyTimeScale * hostileProjectileScale;
         }
 
         if (player.shieldTime > 0 && Math.hypot(eb.x - (player.x + 16), eb.y - (player.y + 18)) < 34) {
@@ -289,7 +292,7 @@
 
       // Đội hình lượn theo từng hàng, nảy ở biên và tiếp tục tiến xuống.
       // Trả true nếu quái vượt tuyến: đã xử lý mất máu/khởi động lại wave.
-      if (!boss && updateEnemyFormation(enemyTimeScale)) return;
+      if (!boss && waveEntryTicks <= 0 && updateEnemyFormation(enemyTimeScale)) return;
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -299,10 +302,18 @@
       }
 
       if (!boss && enemies.length === 0) {
-        wave++;
-        enemySpeedX = Math.min(2.4, 0.7 + wave * 0.15);
-        document.getElementById('wave-text').innerText = wave;
-        spawnWave();
+        if (waveClearTicks <= 0) {
+          waveClearTicks = 75; // 1,25 giây để hiệu ứng kết thúc màn có thời gian "thở".
+          enemyBullets = [];
+          const notice = document.getElementById('wave-notice');
+          notice.textContent = `✓ WAVE ${wave} CLEAR`;
+          notice.classList.remove('boss-announcement', 'hidden');
+        } else if (--waveClearTicks === 0) {
+          wave++;
+          enemySpeedX = Math.min(1.35, 0.48 + wave * 0.065);
+          document.getElementById('wave-text').innerText = wave;
+          spawnWave();
+        }
       }
 
     }

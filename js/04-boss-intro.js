@@ -65,7 +65,7 @@ const BOSS_FACTS = [
   },
   {
     agent: 'Nhân vật tưởng tượng',
-    fact: 'Trùm cuối hư cấu có ba cột máu: đạn vi khuẩn biến hóa, hộ vệ làm lá chắn, rồi cuồng nộ. Né vạch cảnh báo và hạ gục nó để kết thúc dịch!',
+    fact: 'Trùm cuối hư cấu có ba cột máu: đạn biến hóa, hộ vệ có giáp bắn xa rồi lao cận chiến, cuối cùng cuồng nộ. Né vạch cảnh báo để kết thúc dịch!',
     source: ''
   }
 ];

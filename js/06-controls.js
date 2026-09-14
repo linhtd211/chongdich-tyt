@@ -138,7 +138,7 @@
       lastFrameTime = 0;
       accumulatedTime = 0;
       enemyDir = 1;
-      enemySpeedX = 0.7;
+      enemySpeedX = 0.48;
       formationShiftX = 0;
       formationDropY = 0;
       formationTick = 0;

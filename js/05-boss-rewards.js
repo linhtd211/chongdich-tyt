@@ -41,7 +41,7 @@ function chooseBossReward(kind) {
   document.getElementById('boss-reward-screen').classList.add('hidden');
   // Wave mới bắt đầu sau khi chọn; không có đạn cũ hay vật phẩm boss tự rơi.
   wave++;
-  enemySpeedX = Math.min(2.4, 0.7 + wave * .15);
+  enemySpeedX = Math.min(1.35, 0.48 + wave * .065);
   document.getElementById('wave-text').innerText = wave;
   spawnWave();
   lastFrameTime = 0;
