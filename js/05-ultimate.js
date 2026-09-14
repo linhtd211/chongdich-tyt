@@ -64,6 +64,11 @@ function activateUltimate() {
         defeatEnemy(e);
       }
     }
+    if (boss && boss.final) for (const guard of [...boss.guards]) {
+      const pos = finalGuardPosition(boss, guard);
+      if (Math.abs(pos.x - beamX) <= MEGA_BEAM_WIDTH / 2 + guard.radius)
+        strikeFinalGuard(boss, guard, 5, pos.x, pos.y);
+    }
     if (boss && Math.abs(boss.x - beamX) <= MEGA_BEAM_WIDTH / 2 + boss.w / 2) {
       boss.hp -= 12;
       boss.hitFlash = 9;

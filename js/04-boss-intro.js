@@ -62,6 +62,11 @@ const BOSS_FACTS = [
     agent: 'Ký sinh trùng sốt rét Plasmodium falciparum',
     fact: 'P. falciparum gây sốt rét, thường có sốt, đau đầu, rét run; bệnh có thể nhanh chóng trở nặng nếu không điều trị.',
     source: 'https://www.who.int/news-room/fact-sheets/detail/malaria'
+  },
+  {
+    agent: 'Nhân vật tưởng tượng',
+    fact: 'Chúa Tể Đại Dịch tượng trưng cho cuộc chiến chống dịch trong game; đây không phải một tác nhân gây bệnh có thật. Hãy phá lá chắn hộ vệ và né đòn báo trước để kết thúc dịch!',
+    source: ''
   }
 ];
 
@@ -77,7 +82,9 @@ function showBossIntro(type, waveNumber) {
   document.getElementById('boss-intro-name').textContent = type.name;
   document.getElementById('boss-intro-agent').textContent = info.agent;
   document.getElementById('boss-intro-fact').textContent = info.fact;
-  document.getElementById('boss-intro-source').href = info.source;
+  const sourceLink = document.getElementById('boss-intro-source');
+  sourceLink.classList.toggle('hidden', !info.source);
+  if (info.source) sourceLink.href = info.source;
   noticeTicks = 0;
   document.getElementById('wave-notice').classList.add('hidden');
   screen.classList.remove('hidden');

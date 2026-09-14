@@ -129,6 +129,7 @@
       enemies = [];
       boss = null;
       bossRewardActive = false;
+      document.getElementById('victory-screen').classList.add('hidden');
       document.getElementById('boss-reward-screen').classList.add('hidden');
       isTouching = false;
       movementPointerId = null;
@@ -184,6 +185,7 @@
         animationId = null;
       }
       document.getElementById('gameover-screen').classList.add('hidden');
+      document.getElementById('victory-screen').classList.add('hidden');
       document.getElementById('char-select-screen').classList.remove('hidden');
       bossIntroActive = false;
       document.getElementById('boss-intro-screen').classList.add('hidden');

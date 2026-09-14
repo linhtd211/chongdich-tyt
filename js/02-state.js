@@ -60,7 +60,7 @@
       { type: 'hairy_cyan',   hp: 4, color: '#2dd4bf', altColor: '#22c55e', score: 50, radius: 15, shootType: 'needle' }
     ];
 
-    // BOSS CANVAS: 12 boss luân phiên, 12 nét vẽ riêng; family chỉ còn điều khiển đường đi.
+    // 12 boss thường và trùm cuối ở wave 39; hạ trùm cuối là kết thúc ván thắng.
     // Boss bệnh than được giữ lại một lần: Dã Thú Hoại Tử.
     const BOSS_TYPES = [
       { name: 'Cơ Giáp Thực Khuẩn', family: 'mech', color: '#38bdf8', attack: 'aimed' },
@@ -75,6 +75,7 @@
       { name: 'Dã Thú Hoại Tử', family: 'beast', color: '#facc15', attack: 'spread' },
       { name: 'Linh Hồn Sa Ngã', family: 'mech', color: '#38bdf8', attack: 'spread' },
       { name: 'Huyết Ký Sinh Vương', family: 'queen', color: '#fb7185', attack: 'split' },
+      { name: 'Chúa Tể Đại Dịch', family: 'final', color: '#d86b9f', attack: 'fan' },
     ];
 
     function spawnWave() {
@@ -91,7 +92,7 @@
 
       noticeTicks = 120; // Thông báo màn hiển thị 2 giây.
       const isBossWave = wave % 3 === 0;
-      const bossType = isBossWave ? BOSS_TYPES[(wave / 3 - 1) % BOSS_TYPES.length] : null;
+      const bossType = isBossWave ? BOSS_TYPES[Math.min(wave / 3 - 1, BOSS_TYPES.length - 1)] : null;
       const notice = document.getElementById('wave-notice');
       notice.textContent = bossType ? `⚠ WAVE ${wave} · ${bossType.name}` : `WAVE ${wave}`;
       notice.classList.toggle('boss-announcement', !!bossType);
@@ -101,14 +102,15 @@
         // Mỗi 3 wave là 1 boss. Wave 3 = 45 HP, wave 36 = 267 HP (trước là 705).
         // Chỉnh 12 và 0.75 để cân bằng tăng trưởng đầu/cuối mà không chặn vô tận.
         const bossRank = wave / 3 - 1;
-        const bossHp = 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
+        const bossHp = wave === 39 ? 330 : 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
         boss = {
           name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
-          variant: (wave / 3 - 1) % BOSS_TYPES.length, attackCount: 2,
+          variant: Math.min(bossRank, BOSS_TYPES.length - 1), final: wave === 39,
+          guards: [], summonCount: 0, attackCount: 2,
           windup: 0, windupTotal: 0, specialShots: null, specialName: '', hitFlash: 0,
           phase: 1, phaseTransition: 0,
           x: 160, y: 67,
-          w: 92, h: 86,
+          w: wave === 39 ? 100 : 92, h: 86,
           hp: bossHp, maxHp: bossHp,
           pathTicks: 0, shootCooldown: 120, animTimer: 0
         };

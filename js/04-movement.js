@@ -9,7 +9,8 @@ const BOSS_PATHS = {
   serpent: { width: 93, height: 36, speedX: .033, speedY: .055 },
   virus:   { width: 84, height: 35, speedX: .037, speedY: .047 },
   beast:   { width: 92, height: 37, speedX: .044, speedY: .060 },
-  queen:   { width: 80, height: 34, speedX: .025, speedY: .043 }
+  queen:   { width: 80, height: 34, speedX: .025, speedY: .043 },
+  final:   { width: 64, height: 30, speedX: .029, speedY: .046 }
 };
 
 function updateBossPath(b, timeScale) {

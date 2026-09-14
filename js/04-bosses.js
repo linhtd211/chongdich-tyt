@@ -22,7 +22,8 @@ function drawBoss(b) {
     ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 3 + Math.sin(t * 18) * 1.5;
     ctx.beginPath(); ctx.arc(0, 0, 62 + Math.sin(t * 18) * 3, 0, Math.PI * 2); ctx.stroke();
   }
-  drawDistinctBossArt(b, t, blink); // 12 nét vẽ riêng tại 04-boss-art.js.
+  if (b.final) drawFinalBossActor(ctx, t / 2.4, 0, 0, b.windup > 0);
+  else drawDistinctBossArt(b, t, blink);
   if (b.phase === 2) {
     // Pha hai chỉ vẽ một vòng hào quang, tránh tạo particle mới mỗi frame.
     ctx.strokeStyle = `rgba(251, 113, 133, ${.45 + .2 * Math.sin(t * 7)})`;
@@ -32,6 +33,10 @@ function drawBoss(b) {
       ctx.fillStyle = '#fff7ed'; ctx.textAlign = 'center';
       ctx.font = 'bold 13px sans-serif'; ctx.fillText('PHA 2!', 0, -73);
     }
+  }
+  if (b.phase === 3) {
+    ctx.strokeStyle = '#ffb478';ctx.lineWidth = 3;
+    ctx.beginPath();ctx.arc(0, 0, 72 + Math.sin(t * 6) * 3, 0, Math.PI * 2);ctx.stroke();
   }
   if (b.hitFlash > 0) {
     ctx.globalAlpha = b.hitFlash / 10;
@@ -82,6 +87,12 @@ function drawBossTelegraph(b) {
   ctx.setLineDash([7, 6]);
   ctx.strokeStyle = `rgba(251, 191, 36, ${pulse})`;
   ctx.lineWidth = 3;
+  if (b.final && b.specialKind === 'summon') {
+    for (const slot of [0, 1, 2]) {
+      const pos = finalGuardPosition(b, { slot });
+      ctx.beginPath();ctx.arc(pos.x, pos.y, 18, 0, Math.PI * 2);ctx.stroke();
+    }
+  }
   for (const s of b.specialShots) {
     const ticks = Math.min(160, (canvas.height - s.y) / s.vy);
     if (s.type === 'split' && ticks > 45) {
@@ -134,13 +145,24 @@ function beginBossPhaseTwo(b) {
   warning.classList.remove('hidden');
 }
 
+function beginFinalPhaseThree(b) {
+  b.phase = 3;
+  b.phaseTransition = 95;
+  b.windup = 0; b.specialShots = null; b.specialKind = null;
+  enemyBullets = []; // Khoảng thở trước pha cuối.
+  const warning = document.getElementById('boss-attack-warning');
+  warning.textContent = '⚠ PHA CUỐI · Boss nổi giận, né các vạch vàng!';
+  warning.classList.remove('hidden');
+}
+
 function updateBoss(b, timeScale) {
   if (b.phase === 1 && b.hp <= b.maxHp / 2) beginBossPhaseTwo(b);
+  if (b.final && b.phase === 2 && b.hp <= b.maxHp / 4) beginFinalPhaseThree(b);
   if (b.phaseTransition > 0) {
     b.phaseTransition = Math.max(0, b.phaseTransition - timeScale);
     if (b.phaseTransition === 0) {
       document.getElementById('boss-attack-warning').classList.add('hidden');
-      b.shootCooldown = 45;
+      b.shootCooldown = b.phase === 3 ? 55 : 45;
     }
     return;
   }
@@ -152,27 +174,34 @@ function updateBoss(b, timeScale) {
     if (b.windup <= 0) {
       b.windup = 0;
       if (b.specialShots) {
-        enemyBullets.push(...b.specialShots);
+        if (b.specialKind === 'summon') summonFinalGuards(b);
+        else enemyBullets.push(...b.specialShots);
         b.specialShots = null;
+        b.specialKind = null;
         b.specialName = '';
         b.attackCount++;
         document.getElementById('boss-attack-warning').classList.add('hidden');
-        b.shootCooldown = b.phase === 2 ? 70 : 85; // Vẫn có nhịp nghỉ sau chiêu.
+        b.shootCooldown = b.phase === 3 ? 64 : b.phase === 2 ? 75 : 92;
       } else {
         fireBossAttack(b);
-        b.shootCooldown = (55 + (b.variant % 3) * 10) * (b.phase === 2 ? .85 : 1);
+        b.shootCooldown = b.final ? (b.phase === 3 ? 53 : b.phase === 2 ? 67 : 83)
+          : (55 + (b.variant % 3) * 10) * (b.phase === 2 ? .85 : 1);
       }
     }
   } else {
     b.shootCooldown -= timeScale;
     if (b.shootCooldown <= 0) {
-      if ((b.attackCount + 1) % (b.phase === 2 ? 2 : 3) === 0) {
-        const special = buildBossSpecial(b);
+      if (b.final ? (b.summonCount === 0 || (b.attackCount + 1) % (b.phase >= 2 ? 2 : 3) === 0)
+                  : (b.attackCount + 1) % (b.phase === 2 ? 2 : 3) === 0) {
+        const special = b.final ? buildFinalSpecial(b) : buildBossSpecial(b);
         b.specialShots = special.shots;
+        b.specialKind = special.kind || 'shots';
         b.specialName = special.name;
-        b.windup = b.phase === 2 ? 60 : 65; // Pha hai vẫn báo trước đủ 1 giây.
+        b.windup = b.final ? (b.phase === 3 ? 70 : 82) : b.phase === 2 ? 60 : 65;
         const warning = document.getElementById('boss-attack-warning');
-        warning.textContent = `⚠ Sắp ra chiêu: ${special.name} · né khỏi vạch vàng!`;
+        warning.textContent = b.specialKind === 'summon'
+          ? '⚠ Boss gọi hộ vệ làm lá chắn · bắn hạ chúng trước!'
+          : `⚠ Sắp ra chiêu: ${special.name} · né khỏi vạch vàng!`;
         warning.classList.remove('hidden');
       } else b.windup = 25; // Đòn thường: 0,4 giây cảnh báo bằng vòng sáng.
       b.windupTotal = b.windup;

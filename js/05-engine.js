@@ -20,6 +20,7 @@
     function defeatBoss() {
       if (!boss || boss.hp > 0) return;
       const downed = boss;
+      if (downed.final) { finishFinalBoss(downed); return; }
       AudioEngine.explode();
       createExplosion(downed.x, downed.y, '#84cc16', 45);
       score += 400;
@@ -89,6 +90,21 @@
           continue;
         }
 
+        // Hộ vệ trùm cuối chắn những viên chạm vào thân mình trước khi tới boss.
+        // Đạn xuyên của Bác sĩ cũng bị khiên này hấp thụ.
+        if (boss && boss.final && boss.guards.length) {
+          const guard = boss.guards.find(g => {
+            const pos = finalGuardPosition(boss, g);
+            return Math.hypot(b.x - pos.x, b.y - pos.y) < g.radius + (b.radius || 4);
+          });
+          if (guard) {
+            const pos = finalGuardPosition(boss, guard);
+            strikeFinalGuard(boss, guard, 1, pos.x, pos.y);
+            gainUltimateCharge();
+            bullets.splice(i, 1);
+            continue;
+          }
+        }
         // Bắn trúng Boss
         if (boss && Math.hypot(b.x - boss.x, b.y - boss.y) < boss.w / 2 + 4 && !(b.hitTargets && b.hitTargets.has(boss))) {
           if (b.hero === 'doctor') {
@@ -106,6 +122,7 @@
           }
 
           defeatBoss();
+          if (isGameOver) return;
           continue;
         }
 
@@ -155,7 +172,8 @@
       bossHud.classList.toggle('hidden', !boss);
       if (boss) {
         document.getElementById('boss-name').textContent = boss.name;
-        document.getElementById('boss-phase').textContent = `PHA ${boss.phase}`;
+        document.getElementById('boss-phase').textContent = boss.final
+          ? `PHA ${boss.phase} · 🛡 ${boss.guards.length}` : `PHA ${boss.phase}`;
         document.getElementById('boss-hp').textContent = `${boss.hp}/${boss.maxHp}`;
         document.getElementById('boss-bar').style.width = `${Math.max(0, boss.hp / boss.maxHp * 100)}%`;
         document.getElementById('boss-bar').style.backgroundColor = boss.phase === 2 ? '#f97316' : '';
@@ -367,7 +385,10 @@
         }
       }
 
-      if (boss) { drawBossTelegraph(boss); drawBoss(boss); }
+      if (boss) {
+        drawBossTelegraph(boss);drawBoss(boss);
+        if (boss.final) renderFinalGuards(boss);
+      }
 
       for (let p of particles) {
         ctx.fillStyle = p.color;

@@ -37,3 +37,9 @@
 
 /* Tên boss dài được chia dòng đẹp khi vừa vào trận. */
 .boss-announcement { max-width: 92%; margin-inline: auto; font-size: 31px; line-height: 1.08; color: #fda4af; text-shadow: 0 2px 12px #000, 0 0 18px #fb7185; }
+/* Bằng khen cuối game: chữ và hoa văn CSS nhẹ, luôn đọc được trên điện thoại. */
+.victory-certificate {
+  background: linear-gradient(145deg, #fff9df, #edd9a1);
+  border: 6px double #ac813e;
+  box-shadow: inset 0 0 0 2px #f8ebc4, 0 12px 28px #0005;
+}
