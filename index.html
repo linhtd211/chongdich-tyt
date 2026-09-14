@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.14.0 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.15.0 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=1.14.0">
+  <link rel="stylesheet" href="css/style.css?v=1.15.0">
 </head>
 <body class="text-white flex flex-col items-center justify-between h-full p-2">
 
@@ -15,7 +15,7 @@
     <div class="pixel-font text-4xl text-emerald-400 mb-0.5 font-bold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">
       BIỆT ĐỘI Y TẾ TYT THẠCH THẤT
     </div>
-    <p class="text-xs text-cyan-300 mb-1">v1.14.0 · trùm cuối wave 39</p>
+    <p class="text-xs text-cyan-300 mb-1">v1.15.0 · trùm cuối 3 cột máu</p>
     <p class="text-xs text-slate-300 mb-1">Chọn nhân vật chuyên môn</p>
     <p class="text-amber-300 text-xs mb-3">🏆 Kỷ lục: <strong id="intro-record">0</strong> điểm · Wave xa nhất: <strong id="intro-wave">0</strong></p>
 
@@ -151,7 +151,12 @@
   <div id="shield-hud" class="hidden w-full max-w-sm text-center text-sky-200 text-xs">🛡 Lá chắn: <span id="shield-seconds">0</span>s</div>
   <div id="boss-hud" class="hidden w-full max-w-sm text-xs text-rose-200">
     <div class="flex justify-between gap-2"><span id="boss-name">BOSS</span><span id="boss-phase" class="text-amber-300">PHA 1</span><span id="boss-hp">0/0</span></div>
-    <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden"><div id="boss-bar" class="h-full bg-rose-500" style="width:100%"></div></div>
+    <div id="boss-normal-health" class="w-full h-2 bg-slate-700 rounded-full overflow-hidden"><div id="boss-bar" class="h-full bg-rose-500" style="width:100%"></div></div>
+    <div id="boss-final-health" class="hidden grid grid-cols-3 gap-1 mt-1" aria-label="Ba cột máu trùm cuối">
+      <div><div class="text-[9px] text-sky-200">1 · ĐẠN ĐỘC</div><div class="h-2.5 bg-slate-700 rounded overflow-hidden"><div id="boss-bar-1" class="h-full bg-sky-400" style="width:100%"></div></div></div>
+      <div><div class="text-[9px] text-violet-200">2 · HỘ VỆ</div><div class="h-2.5 bg-slate-700 rounded overflow-hidden"><div id="boss-bar-2" class="h-full bg-violet-400" style="width:100%"></div></div></div>
+      <div><div class="text-[9px] text-orange-200">3 · CUỒNG NỘ</div><div class="h-2.5 bg-slate-700 rounded overflow-hidden"><div id="boss-bar-3" class="h-full bg-orange-400" style="width:100%"></div></div></div>
+    </div>
     <div id="boss-attack-warning" class="hidden mt-1 font-bold text-amber-300" role="status"></div>
   </div>
   <!-- THANH NẠP TUYỆT KỸ: nút tròn cố định ở góc dưới bên phải khung game. -->
@@ -167,7 +172,7 @@
   <!-- KHUNG GAME CANVAS (320x460) -->
   <div id="game-frame" class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
-    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.14.0</span>
+    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.15.0</span>
     <!-- Nút cố định: pointerdown và click bàn phím gắn trong js/06-controls.js. -->
     <button id="ultimate-button" type="button"
       class="ultimate-button" aria-disabled="true" aria-label="Tuyệt kỹ chưa nạp đầy">
@@ -183,22 +188,22 @@
     </div>
   </div>
 
-  <script src="js/01-audio.js?v=1.14.0"></script>
-  <script src="js/02-state.js?v=1.14.0"></script>
-  <script src="js/03-characters.js?v=1.14.0"></script>
-  <script src="js/04-weapons-enemies.js?v=1.14.0"></script>
-  <script src="js/04-enemy-sprites.js?v=1.14.0"></script>
-  <script src="js/04-movement.js?v=1.14.0"></script>
-  <script src="js/04-boss-art.js?v=1.14.0"></script>
-  <script src="js/04-final-boss-art.js?v=1.14.0"></script>
-  <script src="js/04-final-guardians-art.js?v=1.14.0"></script>
-  <script src="js/04-final-boss.js?v=1.14.0"></script>
-  <script src="js/04-bosses.js?v=1.14.0"></script>
-  <script src="js/04-boss-intro.js?v=1.14.0"></script>
-  <script src="js/05-ultimate.js?v=1.14.0"></script>
-  <script src="js/05-results.js?v=1.14.0"></script>
-  <script src="js/05-boss-rewards.js?v=1.14.0"></script>
-  <script src="js/05-engine.js?v=1.14.0"></script>
-  <script src="js/06-controls.js?v=1.14.0"></script>
+  <script src="js/01-audio.js?v=1.15.0"></script>
+  <script src="js/02-state.js?v=1.15.0"></script>
+  <script src="js/03-characters.js?v=1.15.0"></script>
+  <script src="js/04-weapons-enemies.js?v=1.15.0"></script>
+  <script src="js/04-enemy-sprites.js?v=1.15.0"></script>
+  <script src="js/04-movement.js?v=1.15.0"></script>
+  <script src="js/04-boss-art.js?v=1.15.0"></script>
+  <script src="js/04-final-boss-art.js?v=1.15.0"></script>
+  <script src="js/04-final-guardians-art.js?v=1.15.0"></script>
+  <script src="js/04-final-boss.js?v=1.15.0"></script>
+  <script src="js/04-bosses.js?v=1.15.0"></script>
+  <script src="js/04-boss-intro.js?v=1.15.0"></script>
+  <script src="js/05-ultimate.js?v=1.15.0"></script>
+  <script src="js/05-results.js?v=1.15.0"></script>
+  <script src="js/05-boss-rewards.js?v=1.15.0"></script>
+  <script src="js/05-engine.js?v=1.15.0"></script>
+  <script src="js/06-controls.js?v=1.15.0"></script>
 </body>
 </html>

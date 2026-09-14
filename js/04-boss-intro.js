@@ -65,7 +65,7 @@ const BOSS_FACTS = [
   },
   {
     agent: 'Nhân vật tưởng tượng',
-    fact: 'Chúa Tể Đại Dịch tượng trưng cho cuộc chiến chống dịch trong game; đây không phải một tác nhân gây bệnh có thật. Hãy phá lá chắn hộ vệ và né đòn báo trước để kết thúc dịch!',
+    fact: 'Trùm cuối hư cấu có ba cột máu: đạn vi khuẩn biến hóa, hộ vệ làm lá chắn, rồi cuồng nộ. Né vạch cảnh báo và hạ gục nó để kết thúc dịch!',
     source: ''
   }
 ];

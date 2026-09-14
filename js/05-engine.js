@@ -173,10 +173,21 @@
       if (boss) {
         document.getElementById('boss-name').textContent = boss.name;
         document.getElementById('boss-phase').textContent = boss.final
-          ? `PHA ${boss.phase} · 🛡 ${boss.guards.length}` : `PHA ${boss.phase}`;
+          ? `CỘT ${boss.phase}/3${boss.phase === 2 ? ` · 🛡 ${boss.guards.length}` : ''}` : `PHA ${boss.phase}`;
         document.getElementById('boss-hp').textContent = `${boss.hp}/${boss.maxHp}`;
-        document.getElementById('boss-bar').style.width = `${Math.max(0, boss.hp / boss.maxHp * 100)}%`;
-        document.getElementById('boss-bar').style.backgroundColor = boss.phase === 2 ? '#f97316' : '';
+        document.getElementById('boss-normal-health').classList.toggle('hidden', boss.final);
+        document.getElementById('boss-final-health').classList.toggle('hidden', !boss.final);
+        if (boss.final) {
+          const segment = boss.maxHp / 3;
+          // Cột trái cạn trước, sau đó cột giữa rồi đến cột cuối.
+          for (let n = 1; n <= 3; n++) {
+            const remaining = Math.max(0, Math.min(segment, boss.hp - (3 - n) * segment));
+            document.getElementById(`boss-bar-${n}`).style.width = `${remaining / segment * 100}%`;
+          }
+        } else {
+          document.getElementById('boss-bar').style.width = `${Math.max(0, boss.hp / boss.maxHp * 100)}%`;
+          document.getElementById('boss-bar').style.backgroundColor = boss.phase === 2 ? '#f97316' : '';
+        }
       }
 
       // Vi khuẩn thường xả đạn

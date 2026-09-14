@@ -102,17 +102,18 @@
         // Mỗi 3 wave là 1 boss. Wave 3 = 45 HP, wave 36 = 267 HP (trước là 705).
         // Chỉnh 12 và 0.75 để cân bằng tăng trưởng đầu/cuối mà không chặn vô tận.
         const bossRank = wave / 3 - 1;
-        const bossHp = wave === 39 ? 330 : 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
+        // Ba cột máu nối tiếp, mỗi cột 270 HP; thứ tự pha 1 → 2 → 3.
+        const bossHp = wave === 39 ? 810 : 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
         boss = {
           name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
           variant: Math.min(bossRank, BOSS_TYPES.length - 1), final: wave === 39,
-          guards: [], summonCount: 0, attackCount: 2,
+          guards: [], summonCount: 0, guardVolleyTimer: 105, attackCount: 2,
           windup: 0, windupTotal: 0, specialShots: null, specialName: '', hitFlash: 0,
           phase: 1, phaseTransition: 0,
           x: 160, y: 67,
           w: wave === 39 ? 100 : 92, h: 86,
           hp: bossHp, maxHp: bossHp,
-          pathTicks: 0, shootCooldown: 120, animTimer: 0
+          pathTicks: 0, shootCooldown: wave === 39 ? 72 : 120, animTimer: 0
         };
         showBossIntro(bossType, wave);
         return;
