@@ -285,9 +285,9 @@
             const labels = ["CẤP 1", "CẤP 2", "CẤP 3", "CẤP 4", "MAX POWER"];
             document.getElementById('gun-text').innerText = labels[player.gunLevel - 1];
           } else {
-            if (hp < 3) {
+            if (hp < (player.maxHp || 3)) {
               hp++;
-              document.getElementById('hp-text').innerText = '❤️'.repeat(hp);
+              if (typeof refreshHpHud === 'function') refreshHpHud(); else document.getElementById('hp-text').innerText = '❤️'.repeat(hp);
             }
           }
           continue;

@@ -163,6 +163,12 @@
       player.targetY = 400;
       player.invincibleTime = 0;
       player.shieldTime = 0;
+      player.maxHp = 3;
+      player.postBossShield = false;
+      player.damageBonus = 0;
+      player.fireBonus = 0;
+      player.ultimateBonus = 0;
+      if (typeof upgradeStacks !== 'undefined') upgradeStacks = {damage:0,fire:0,armor:0,ultimate:0,shield:0};
       player.shootCooldown = 0;
       isGameOver = false;
 

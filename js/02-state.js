@@ -28,6 +28,11 @@
       invincibleTime: 0,
       shieldTime: 0,
       shootCooldown: 0,
+      maxHp: 3,
+      postBossShield: false,
+      damageBonus: 0,
+      fireBonus: 0,
+      ultimateBonus: 0,
       targetX: 145,
       targetY: 400
     };
