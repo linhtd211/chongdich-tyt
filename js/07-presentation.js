@@ -6,10 +6,23 @@ let tutorialPage = 0;
 let deathSequenceRAF = null, deathSequenceStart = 0, deathSceneSnapshot = null;
 const tutorialPages = [
   {icon:'🦠', kicker:'BÁO ĐỘNG DỊCH BỆNH!', title:'BIỆT ĐỘI Y TẾ XUẤT KÍCH', body:'Vi khuẩn đang xâm nhập vùng dịch!<br>Đội ngũ y tế đã được điều động.<br><br><strong class="text-emerald-300">Nhiệm vụ:</strong> tiêu diệt vi khuẩn, vượt qua 3 Wave và đánh bại Boss của từng chặng.'},
-  {icon:'🎮', kicker:'HƯỚNG DẪN ĐIỀU KHIỂN', title:'DI CHUYỂN · BẮN · ULTIMATE', body:'<div class="grid grid-cols-2 gap-2 text-left"><div class="rounded-lg bg-slate-800 p-2"><b>⌨️ WASD / ←↑↓→</b><br><span class="text-slate-400">Di chuyển</span></div><div class="rounded-lg bg-slate-800 p-2"><b>SPACE / Kéo chạm</b><br><span class="text-slate-400">Bắn</span></div><div class="rounded-lg bg-slate-800 p-2 col-span-2"><b>⚡ B / nút Ultimate</b><br><span class="text-slate-400">Chỉ dùng khi thanh năng lượng đã đầy</span></div></div>'},
+  {icon:'⌨️', kicker:'CHƠI TRÊN MÁY TÍNH', title:'DI CHUYỂN · BẮN · ULTIMATE', body:'<div class="grid grid-cols-2 gap-2 text-left"><div class="rounded-lg bg-slate-800 p-2"><b>WASD / ←↑↓→</b><br><span class="text-slate-400">Di chuyển</span></div><div class="rounded-lg bg-slate-800 p-2"><b>SPACE</b><br><span class="text-slate-400">Bắn</span></div><div class="rounded-lg bg-slate-800 p-2 col-span-2"><b>Phím B / nút Ultimate</b><br><span class="text-slate-400">Dùng khi thanh năng lượng đã đầy</span></div></div>'},
+  {icon:'📱', kicker:'CHƠI TRÊN ĐIỆN THOẠI', title:'KÉO · BẮN · ULTIMATE', body:'<div class="grid grid-cols-1 gap-2 text-left"><div class="rounded-lg bg-slate-800 p-2"><b>👆 KÉO TRÊN VÙNG CHIẾN ĐẤU</b><br><span class="text-slate-400">Kéo ngón tay để di chuyển nhân vật và duy trì bắn.</span></div><div class="rounded-lg bg-slate-800 p-2"><b>⚡ CHẠM NÚT B</b><br><span class="text-slate-400">Khi vòng Ultimate đầy, dùng ngón tay còn lại chạm nút B.</span></div><div class="rounded-lg border border-amber-400/40 bg-amber-950/30 p-2 text-center"><b class="text-amber-300">MẸO</b><br><span class="text-slate-300">Nên xoay điện thoại nằm ngang để dễ quan sát và điều khiển.</span></div></div>'},
   {icon:'🚨', kicker:'LUẬT CHƠI', title:'3 WAVE → BOSS → NÂNG CẤP', body:'🦠 <b>Wave 1:</b> đội hình Xâm nhập<br>🧬 <b>Wave 2:</b> Elite Đột biến<br>🚨 <b>Wave 3:</b> sự kiện ngẫu nhiên<br>👾 <b>Boss:</b> kết thúc chặng<br>⭐ Hạ Boss để chọn 1 trong 3 nâng cấp.<br><span class="text-amber-300">Hoàn thành nhiệm vụ phụ để nhận thêm lợi thế.</span>'}
 ];
-function renderTutorial(){const p=tutorialPages[tutorialPage];document.getElementById('tutorial-icon').textContent=p.icon;document.getElementById('tutorial-kicker').textContent=p.kicker;document.getElementById('tutorial-title').textContent=p.title;document.getElementById('tutorial-body').innerHTML=p.body;document.querySelectorAll('.tutorial-dot').forEach((d,i)=>d.classList.toggle('active',i===tutorialPage));document.getElementById('tutorial-next').textContent=tutorialPage===tutorialPages.length-1?'BẮT ĐẦU NHIỆM VỤ ▶':'TIẾP THEO ▶'}
+function renderTutorial(){
+  const p=tutorialPages[tutorialPage];
+  document.getElementById('tutorial-icon').textContent=p.icon;
+  document.getElementById('tutorial-kicker').textContent=p.kicker;
+  document.getElementById('tutorial-title').textContent=p.title;
+  document.getElementById('tutorial-body').innerHTML=p.body;
+
+  const dots=document.querySelectorAll('.tutorial-dot');
+  dots.forEach((d,i)=>d.classList.toggle('active',i===tutorialPage));
+
+  document.getElementById('tutorial-next').textContent=
+    tutorialPage===tutorialPages.length-1?'BẮT ĐẦU NHIỆM VỤ ▶':'TIẾP THEO ▶';
+}
 function openTutorial(force=false){tutorialPage=0;renderTutorial();document.getElementById('tutorial-screen').classList.remove('hidden');document.getElementById('tutorial-skip').textContent=force?'ĐÓNG':'Bỏ qua'}
 function nextTutorial(){if(tutorialPage<tutorialPages.length-1){tutorialPage++;renderTutorial()}else closeTutorial()}
 function closeTutorial(){document.getElementById('tutorial-screen').classList.add('hidden');try{localStorage.setItem(TUTORIAL_KEY,'1')}catch(_){}}
