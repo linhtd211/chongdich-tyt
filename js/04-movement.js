@@ -52,7 +52,9 @@ function updateEnemyFormation(timeScale) {
   }
   // Đoạn đường ngang ngắn hơn do lượn rộng: xuống 8px mỗi lần để tốc độ
   // tiến về nhân vật gần tương đương v1.11 (12px với đoạn đường ngang dài).
-  if (bounced) formationDropY += 8;
+  // Wave 3: cả đội hình giữ tuyến; chỉ từng vi khuẩn lần lượt lao xuống.
+  // Wave 1/2 vẫn giữ cơ chế đội hình hạ thấp dần như trước.
+  if (bounced && waveSlot() !== 3) formationDropY += 8;
 
   // Tăng biên độ dần trong 40 tick đầu wave để lính không nhảy vị trí lúc xuất hiện.
   const ease = Math.min(1, formationTick / 40);
@@ -64,13 +66,20 @@ function updateEnemyFormation(timeScale) {
   }
   // Mỗi ~3,7 giây, một lính hàng dưới tách đội hình, lao xuống rồi quay về.
   // Luân phiên qua các lính còn sống, không sinh thêm quái hay đạn.
-  const divePeriod = 300, diveStart = 60, diveDuration = 135;
+  // Wave 3 dùng cơ chế "SEQUENTIAL ASSAULT": chỉ MỘT con tấn công tại một thời điểm.
+  // RUSH HOUR làm lượt kế tiếp đến nhanh hơn, nhưng tuyệt đối không cho nhiều con lao đồng thời.
+  const sequentialWave3 = waveSlot() === 3;
+  const divePeriod = sequentialWave3 ? (waveEvent === 'rush' ? 115 : 155) : 300;
+  const diveStart = sequentialWave3 ? 38 : 60;
+  const diveDuration = sequentialWave3 ? 92 : 135;
   const cycle = Math.floor(formationTick / divePeriod);
   const diveTime = formationTick % divePeriod;
   const divePhase = Math.max(0, Math.min(1, (diveTime - diveStart) / diveDuration));
   const diveStrength = diveTime >= diveStart && diveTime <= diveStart + diveDuration
     ? Math.sin(divePhase * Math.PI) ** 2 : 0;
-  const diverIndex = cycle % bottomCount;
+  // Wave 3 luân phiên qua TOÀN BỘ lính còn sống; wave thường chỉ chọn hàng dưới như cũ.
+  const attackPool = sequentialWave3 ? enemies : enemies.filter(e => e.row === bottomRow);
+  const activeAttacker = attackPool.length ? attackPool[cycle % attackPool.length] : null;
   let bottomIndex = 0;
   for (const e of enemies) {
     e.animTimer += .045 * timeScale;
@@ -80,16 +89,17 @@ function updateEnemyFormation(timeScale) {
       Math.sin(formationTick * .082 + e.motionPhase) * 9 * ease +
       Math.sin(formationTick * .029 + e.row * .85) * 7 * ease;
     e.diving = false;
-    if (e.row === bottomRow) {
-      if (bottomIndex === diverIndex && diveTime >= 10 && diveTime <= diveStart + diveDuration) {
-        e.diving = true; // Vòng cảnh báo nổi bật trước khi lính lao xuống.
+    if ((sequentialWave3 && e === activeAttacker) || (!sequentialWave3 && e.row === bottomRow)) {
+      const selected = sequentialWave3 ? e === activeAttacker : bottomIndex === (cycle % Math.max(1,bottomCount));
+      if (selected && diveTime >= 8 && diveTime <= diveStart + diveDuration) {
+        e.diving = true; // Vòng cảnh báo trước khi đúng một lính lao xuống.
         if (diveStrength > 0) {
-          // Không để cú lao bất ngờ đè lên vùng nhân vật khi người chơi né lên cao.
-          const safeDive = Math.max(0, Math.min(52, player.y - e.radius - 22 - e.y));
+          const maxDive = sequentialWave3 ? 112 : 52;
+          const safeDive = Math.max(0, Math.min(maxDive, player.y - e.radius - 24 - e.y));
           e.y += safeDive * diveStrength;
         }
       }
-      bottomIndex++;
+      if (!sequentialWave3 && e.row === bottomRow) bottomIndex++;
     }
     if (bounced && e.y >= player.y - 12) {
       takeHit();
