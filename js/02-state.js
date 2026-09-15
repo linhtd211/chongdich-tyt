@@ -81,76 +81,21 @@
     ];
 
     function spawnWave() {
-      // Chuyển wave hoặc chơi lại wave sau khi quái vượt tuyến:
-      // xóa toàn bộ đạn cũ, giữ powerUps do lính thường rơi để vẫn nhặt được.
-      bullets = [];
-      enemyBullets = [];
-      enemies = [];
-      boss = null;
-      formationShiftX = 0;
-      formationDropY = 0;
-      formationTick = 0;
-      document.getElementById('boss-attack-warning').classList.add('hidden');
-
-      noticeTicks = 150; // Thông báo màn hiển thị 2,5 giây.
-      waveEntryTicks = 50; // ~0,83 giây chuyển cảnh trước khi đội hình bắt đầu di chuyển/bắn.
-      waveClearTicks = 0;
-      const isBossWave = wave % 4 === 0;
-      const bossType = isBossWave ? BOSS_TYPES[Math.min(wave / 4 - 1, BOSS_TYPES.length - 1)] : null;
-      const notice = document.getElementById('wave-notice');
-      notice.textContent = bossType ? `⚠ WAVE ${wave} · ${bossType.name}` : `WAVE ${wave}`;
-      notice.classList.toggle('boss-announcement', !!bossType);
-      notice.classList.remove('hidden');
-      if (bossType) {
-        AudioEngine.bossRoar();
-        // Sau 3 wave lính thường là 1 boss: wave 4, 8, 12...; trùm cuối ở wave 52.
-        // Chỉnh 12 và 0.75 để cân bằng tăng trưởng đầu/cuối mà không chặn vô tận.
-        const bossRank = wave / 4 - 1;
-        // Ba cột máu nối tiếp, mỗi cột 600 HP; thứ tự pha 1 → 2 → 3.
-        const bossHp = wave === 52 ? 1800 : 45 + 12 * bossRank + Math.floor(.75 * bossRank * bossRank);
-        boss = {
-          name: bossType.name, family: bossType.family, color: bossType.color, attack: bossType.attack,
-          variant: Math.min(bossRank, BOSS_TYPES.length - 1), final: wave === 52,
-          guards: [], summonCount: 0, guardVolleyTimer: 65,
-          melee: null, meleeCooldown: 100, meleeAttackCount: 0,
-          secondGuardScheduled: false, attackCount: 2,
-          windup: 0, windupTotal: 0, specialShots: null, specialName: '', hitFlash: 0,
-          phase: 1, phaseTransition: 0,
-          x: 160, y: 67,
-          w: wave === 52 ? 100 : 92, h: 86,
-          hp: bossHp, maxHp: bossHp,
-          pathTicks: 0, shootCooldown: wave === 52 ? 72 : 120, animTimer: 0
-        };
-        showBossIntro(bossType, wave);
-        return;
-      }
-
-      const rows = 3 + Math.min(wave, 3);
-      const cols = 6;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          let type = ENEMY_TYPES[0];
-          if (r === 0) type = (wave >= 4) ? ENEMY_TYPES[4] : ENEMY_TYPES[1];
-          else if (r === 1) type = ENEMY_TYPES[1];
-          else if (r === 2) type = ENEMY_TYPES[3];
-          else type = (c % 2 === 0) ? ENEMY_TYPES[0] : ENEMY_TYPES[2];
-
-          // 6 skin cho mỗi họ lính: 2 mẫu gốc + 4 mẫu mới = 30 mẫu tổng cộng.
-          // Phân bố theo hàng/cột/wave để một màn có nhiều ngoại hình khác nhau.
-          const skin = (c + r * 2 + wave) % 6;
-          enemies.push({
-            x: 24 + c * 46,
-            y: 35 + r * 36,
-            baseX: 24 + c * 46, baseY: 35 + r * 36,
-            motionPhase: c * .63 + r * 1.17, row: r,
-            radius: type.radius,
-            hp: type.hp, maxHp: type.hp,
-            color: skin ? type.altColor : type.color, score: type.score,
-            type: type.type, skin, shootType: type.shootType,
-            animTimer: Math.random() * 100
-          });
-        }
-      }
+      bullets=[]; enemyBullets=[]; enemies=[]; boss=null; formationShiftX=0; formationDropY=0; formationTick=0;
+      document.getElementById('boss-attack-warning').classList.add('hidden'); noticeTicks=150; waveEntryTicks=50; waveClearTicks=0;
+      const isBossWave=wave%4===0, bossType=isBossWave?BOSS_TYPES[Math.min(wave/4-1,BOSS_TYPES.length-1)]:null;
+      const notice=document.getElementById('wave-notice');
+      notice.textContent=bossType?`⚠ ${stageTheme().toUpperCase()} · ${bossType.name}`:`WAVE ${wave} · ${['XÂM NHẬP','ĐỘT BIẾN','BÁO ĐỘNG ĐỎ'][waveSlot()-1]} · ${stageTheme()}`;
+      notice.classList.toggle('boss-announcement',!!bossType);notice.classList.remove('hidden');
+      if(bossType){AudioEngine.bossRoar();const bossRank=wave/4-1,bossHp=wave===52?1800:45+12*bossRank+Math.floor(.75*bossRank*bossRank);boss={name:bossType.name,family:bossType.family,color:bossType.color,attack:bossType.attack,variant:Math.min(bossRank,BOSS_TYPES.length-1),final:wave===52,guards:[],summonCount:0,guardVolleyTimer:65,melee:null,meleeCooldown:100,meleeAttackCount:0,secondGuardScheduled:false,attackCount:2,windup:0,windupTotal:0,specialShots:null,specialName:'',hitFlash:0,phase:1,phaseTransition:0,x:160,y:67,w:wave===52?100:92,h:86,hp:bossHp,maxHp:bossHp,pathTicks:0,shootCooldown:wave===52?72:120,animTimer:0};showBossIntro(bossType,wave);return}
+      const slot=waveSlot(), formations=['v','wings','arc','columns','surround']; const formation=formations[(stageIndex()+wave)%formations.length];
+      let rows=slot===3?5:4, cols=slot===3?7:6;
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){let type=ENEMY_TYPES[(r+c+stageIndex())%ENEMY_TYPES.length];let x=24+c*(cols===7?42:46), y=38+r*37;
+        if(formation==='v')y+=Math.abs(c-(cols-1)/2)*10; else if(formation==='arc')y+=Math.pow(c-(cols-1)/2,2)*3; else if(formation==='wings')y+=(c===0||c===cols-1)?28:0; else if(formation==='columns')x+=((r%2)*8);
+        const skin=(c+r*2+wave)%6,e=makeEnemy(type,x,y,r,c,skin);enemies.push(e)}
+      if(slot===2){const count=1+Math.floor(Math.random()*3);const kinds=Object.keys(ELITE_META);for(let i=0;i<count;i++){const pool=enemies.filter(e=>!e.elite);if(pool.length)applyElite(pool[Math.floor(Math.random()*pool.length)],kinds[Math.floor(Math.random()*kinds.length)])}}
+      if(slot===3){const events=['swarm','armored','crossfire','mutation','rush','blackout'];waveEvent=events[Math.floor(Math.random()*events.length)];if(waveEvent==='swarm'){for(const e of enemies){e.hp=e.maxHp=Math.max(.75,e.hp*.65);e.radius*=.88}announceEvent('SWARM ATTACK','Đông hơn · máu thấp hơn')}else if(waveEvent==='armored'){enemies.filter(()=>Math.random()<.7).forEach(e=>applyElite(e,'shield'));announceEvent('ARMORED OUTBREAK','Phần lớn vi khuẩn có giáp')}else if(waveEvent==='crossfire'){enemies.forEach((e,i)=>{e.baseX=i%2?22:canvas.width-22;e.x=e.baseX});announceEvent('CROSSFIRE','Địch ép từ hai cánh')}else if(waveEvent==='mutation'){enemies.filter(()=>Math.random()<.3).forEach(e=>applyElite(e,Object.keys(ELITE_META)[Math.floor(Math.random()*6)]));announceEvent('MUTATION','Nhiều Elite đột biến')}else if(waveEvent==='rush'){enemies.filter(()=>Math.random()<.45).forEach(e=>applyElite(e,'rusher'));announceEvent('RUSH HOUR','Nhiều vi khuẩn lao xuống')}else announceEvent('BLACKOUT','Tầm nhìn bị thu hẹp')}
+      beginWaveSystems();
     }
 
     let enemyDir = 1;

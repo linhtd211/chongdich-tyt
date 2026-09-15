@@ -28,7 +28,7 @@ function updateUltimateHud() {
 
 function gainUltimateCharge() {
   if (ultimateCharge >= 100) return;
-  ultimateCharge = Math.min(100, ultimateCharge + ULTIMATE_CHARGE_PER_HIT);
+  ultimateCharge = Math.min(100, ultimateCharge + ULTIMATE_CHARGE_PER_HIT * (1 + (player.ultimateBonus||0)));
   updateUltimateHud();
 }
 

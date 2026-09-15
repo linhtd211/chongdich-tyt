@@ -28,7 +28,7 @@
             color: '#14b8a6'
           });
         }
-        player.shootCooldown = 12;
+        player.shootCooldown = Math.max(7, Math.round(12 / (1 + (player.fireBonus||0))));
       }
       else if (selectedHero === 'nurse') {
         AudioEngine.shootBurst();
@@ -48,7 +48,7 @@
             color: '#f43f5e'
           });
         }
-        player.shootCooldown = 14;
+        player.shootCooldown = Math.max(8, Math.round(14 / (1 + (player.fireBonus||0))));
       }
       else {
         AudioEngine.shootBubble();
@@ -68,7 +68,7 @@
             color: 'rgba(56, 189, 248, 0.65)'
           });
         }
-        player.shootCooldown = 12; // Bong bóng đi chậm hơn nhưng có vùng va chạm rộng.
+        player.shootCooldown = Math.max(7, Math.round(12 / (1 + (player.fireBonus||0)))); // Bong bóng đi chậm hơn nhưng có vùng va chạm rộng.
       }
     }
 

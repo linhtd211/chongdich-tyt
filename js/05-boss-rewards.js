@@ -1,70 +1,11 @@
-/* PHẦN THƯỞNG SAU BOSS – tạm dừng trận và cho chọn đúng một lần.
-   Chỉnh quyền lợi hai nhánh tại chooseBossReward(); chỉnh lời hiển thị tại showBossReward().
-   Nhịp chơi tiếp theo phải qua spawnWave() để xóa mọi đạn từ trận trước. */
-function showBossReward(downed) {
-  bossRewardActive = true;
-  isTouching = false;
-  movementPointerId = null;
-  heldKeys.clear();
-  bullets = [];
-  enemyBullets = [];
-  document.getElementById('boss-hud').classList.add('hidden');
-  document.getElementById('reward-boss-name').textContent = downed.name;
-  document.getElementById('reward-attack-detail').textContent = player.gunLevel < 5
-    ? `Đạn cấp ${player.gunLevel} → ${player.gunLevel + 1} (tối đa cấp 5)`
-    : 'Đạn đã tối đa: nạp đầy tuyệt kỹ và thêm 200 điểm';
-  document.getElementById('reward-defense-detail').textContent = hp < 3
-    ? `Hồi 1 máu (${hp} → ${hp + 1}) và lá chắn 5 giây`
-    : 'Đã đầy máu: nhận lá chắn 5 giây';
-  document.getElementById('boss-reward-screen').classList.remove('hidden');
-  updateUltimateHud();
-}
-
-function chooseBossReward(kind) {
-  if (!bossRewardActive || (kind !== 'attack' && kind !== 'defense')) return false;
-  if (kind === 'attack') {
-    if (player.gunLevel < 5) {
-      player.gunLevel++;
-      const labels = ['CẤP 1', 'CẤP 2', 'CẤP 3', 'CẤP 4', 'MAX POWER'];
-      document.getElementById('gun-text').innerText = labels[player.gunLevel - 1];
-    } else {
-      ultimateCharge = 100;
-      score += 200;
-      document.getElementById('score-text').innerText = score;
-    }
-  } else {
-    hp = Math.min(3, hp + 1);
-    document.getElementById('hp-text').innerText = '❤️'.repeat(hp);
-    player.shieldTime = Math.max(player.shieldTime, 300);
-  }
-  bossRewardActive = false;
-  document.getElementById('boss-reward-screen').classList.add('hidden');
-  // Wave mới bắt đầu sau khi chọn; không có đạn cũ hay vật phẩm boss tự rơi.
-  wave++;
-  enemySpeedX = Math.min(1.35, 0.48 + wave * .065);
-  document.getElementById('wave-text').innerText = wave;
-  spawnWave();
-  lastFrameTime = 0;
-  accumulatedTime = 0;
-  updateUltimateHud();
-  if (animationId === null && !isPaused && !isGameOver && !bossIntroActive) {
-    animationId = requestAnimationFrame(gameLoop);
-  }
-  return true;
-}
-
-// Nhận pointerdown ngay cả khi người chơi vẫn giữ ngón kia trên màn hình;
-// click detail=0 cho bàn phím/trợ năng, tránh nhận hai lần từ cùng cú chạm.
-for (const [id, kind] of [['reward-attack', 'attack'], ['reward-defense', 'defense']]) {
-  const button = document.getElementById(id);
-  button.addEventListener('pointerdown', e => {
-    e.stopPropagation();
-    if (e.button !== 0) return;
-    e.preventDefault();
-    chooseBossReward(kind);
-  });
-  button.addEventListener('click', e => {
-    e.stopPropagation();
-    if (e.detail === 0) chooseBossReward(kind);
-  });
-}
+/* v1.18.0: Sau Boss chọn 1/3 nâng cấp ngẫu nhiên, có rarity và giới hạn stack. */
+let upgradeStacks={damage:0,fire:0,armor:0,ultimate:0,shield:0};
+const UPGRADES=[
+ {id:'damage',icon:'💉',name:'Kháng sinh tăng cường',rarity:'COMMON',max:3,desc:'+10% sát thương (tối đa 3)',apply(){player.damageBonus=(player.damageBonus||0)+.10}},
+ {id:'fire',icon:'⚡',name:'Phản xạ nhanh',rarity:'COMMON',max:3,desc:'+8% tốc độ bắn (tối đa 3)',apply(){player.fireBonus=(player.fireBonus||0)+.08}},
+ {id:'armor',icon:'🛡️',name:'Đồ bảo hộ',rarity:'RARE',max:2,desc:'+1 máu tối đa và hồi 1 máu',apply(){player.maxHp=(player.maxHp||3)+1;hp=Math.min(player.maxHp,hp+1);document.getElementById('hp-text').innerText='❤️'.repeat(hp)}},
+ {id:'ultimate',icon:'🧬',name:'Tế bào ghi nhớ',rarity:'RARE',max:2,desc:'Ultimate nạp nhanh hơn 10%',apply(){player.ultimateBonus=(player.ultimateBonus||0)+.10}},
+ {id:'shield',icon:'🔬',name:'Màng bảo hộ',rarity:'EPIC',max:1,desc:'Nhận khiên 8 giây sau mỗi Boss',apply(){player.shieldTime=Math.max(player.shieldTime,480)}}
+];
+function showBossReward(downed){bossRewardActive=true;isTouching=false;movementPointerId=null;heldKeys.clear();bullets=[];enemyBullets=[];document.getElementById('boss-hud').classList.add('hidden');document.getElementById('reward-boss-name').textContent=`${stageTheme()} · ${downed.name}`;const pool=UPGRADES.filter(u=>(upgradeStacks[u.id]||0)<u.max).sort(()=>Math.random()-.5).slice(0,3);while(pool.length<3)pool.push({id:'heal'+pool.length,icon:'❤️',name:'Hồi phục khẩn cấp',rarity:'COMMON',max:99,desc:'Hồi 1 máu + 100 điểm',apply(){hp=Math.min(player.maxHp||3,hp+1);score+=100;document.getElementById('hp-text').innerText='❤️'.repeat(hp);document.getElementById('score-text').innerText=score}});const box=document.getElementById('upgrade-options');box.innerHTML='';pool.forEach((u,i)=>{const b=document.createElement('button');b.className='text-left rounded-2xl border-2 border-sky-400 bg-slate-900/90 p-3 active:scale-95';b.innerHTML=`<strong class="block text-amber-200">${i+1}. ${u.icon} ${u.name}</strong><span class="text-[9px] text-fuchsia-300">${u.rarity}</span><span class="block text-xs text-slate-200">${u.desc}</span>`;b.onclick=()=>chooseUpgrade(u);box.appendChild(b)});document.getElementById('boss-reward-screen').classList.remove('hidden');updateUltimateHud()}
+function chooseUpgrade(u){if(!bossRewardActive)return;if(UPGRADES.includes(u))upgradeStacks[u.id]=(upgradeStacks[u.id]||0)+1;u.apply();bossRewardActive=false;document.getElementById('boss-reward-screen').classList.add('hidden');wave++;enemySpeedX=Math.min(1.35,.48+wave*.065);document.getElementById('wave-text').innerText=wave;spawnWave();lastFrameTime=0;accumulatedTime=0;updateUltimateHud();if(animationId===null&&!isPaused&&!isGameOver&&!bossIntroActive)animationId=requestAnimationFrame(gameLoop)}

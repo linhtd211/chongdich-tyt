@@ -10,6 +10,7 @@
       if (index < 0 || e.hp > 0) return;
       AudioEngine.explode();
       createExplosion(e.x, e.y, e.color, 14);
+      splitElite(e);
       score += e.score;
       document.getElementById('score-text').innerText = score;
       if (Math.random() < 0.05 && (e.type === 'pink_tentacle' || e.type === 'hairy_cyan')) {
@@ -59,6 +60,7 @@
       if (player.invincibleTime > 0) player.invincibleTime--;
       if (player.shieldTime > 0) player.shieldTime--;
       tickUltimate();
+      tickWaveSystems();
       const enemyTimeScale = stormTicks > 0 ? 0.35 : 1;
       const hostileProjectileScale = 0.82; // Giảm tốc toàn bộ đạn địch/boss để có thời gian quan sát và né.
       if (waveEntryTicks > 0) waveEntryTicks--;
@@ -116,7 +118,7 @@
             if (!b.hitTargets) b.hitTargets = new WeakSet();
             b.hitTargets.add(boss);
           }
-          boss.hp -= PLAYER_BULLET_DAMAGE;
+          boss.hp -= PLAYER_BULLET_DAMAGE * (1 + (player.damageBonus||0));
           boss.hitFlash = 7;
           gainUltimateCharge(); // Chỉ đạn thường bắn trúng mới nạp, tuyệt kỹ không tự nạp lại.
           AudioEngine.hit();
@@ -144,7 +146,8 @@
               if (!b.hitTargets) b.hitTargets = new WeakSet();
               b.hitTargets.add(e);
             }
-            e.hp -= PLAYER_BULLET_DAMAGE;
+            if (e.shield > 0) { e.shield = Math.max(0, e.shield - PLAYER_BULLET_DAMAGE); createExplosion(b.x,b.y,'#67e8f9',4); }
+            else e.hp -= PLAYER_BULLET_DAMAGE * (1 + (player.damageBonus||0));
             gainUltimateCharge();
             AudioEngine.hit();
 
@@ -305,6 +308,7 @@
       }
 
       if (!boss && enemies.length === 0) {
+        if (waveMission && !missionResolved) { missionResolved=true; if (waveMission.type==='nohit' && noDamageMission) completeMission(); else if (waveMission.type==='elite') completeMission(); }
         if (waveClearTicks <= 0) {
           waveClearTicks = 75; // 1,25 giây để hiệu ứng kết thúc màn có thời gian "thở".
           enemyBullets = [];
@@ -410,6 +414,8 @@
         }
       }
 
+      drawWaveSystems();
+
       if (boss) {
         drawBossTelegraph(boss);drawBoss(boss);
         if (boss.final) renderFinalGuards(boss);
@@ -452,6 +458,7 @@
     }
 
     function takeHit() {
+      noDamageMission = false;
       AudioEngine.hurt();
       hp--;
       player.invincibleTime = 60;

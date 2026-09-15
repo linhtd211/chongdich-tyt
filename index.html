@@ -6,7 +6,7 @@
   <title>Bác Sĩ Diệt Khuẩn v1.16.0 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=1.17.1">
+  <link rel="stylesheet" href="css/style.css?v=1.18.0">
 </head>
 <body class="text-white flex flex-col items-center justify-between h-full p-2">
 
@@ -80,17 +80,8 @@
       <h2 id="reward-title" class="pixel-font text-4xl text-amber-300">CHỌN PHẦN THƯỞNG</h2>
       <p id="reward-boss-name" class="text-rose-300 font-bold text-sm mt-1"></p>
       <p class="text-slate-300 text-xs mt-2 mb-4">Chọn một nâng cấp để sang wave tiếp theo</p>
-      <div class="grid gap-3">
-        <button id="reward-attack" type="button" class="text-left rounded-2xl border-2 border-sky-400 bg-sky-950/80 p-4 active:scale-95">
-          <strong class="block text-sky-200 text-lg">💉 1 · NÂNG CẤP VŨ KHÍ</strong>
-          <span id="reward-attack-detail" class="block text-sm text-slate-200 mt-1"></span>
-        </button>
-        <button id="reward-defense" type="button" class="text-left rounded-2xl border-2 border-emerald-400 bg-emerald-950/80 p-4 active:scale-95">
-          <strong class="block text-emerald-200 text-lg">🛡 2 · HỒI PHỤC & BẢO VỆ</strong>
-          <span id="reward-defense-detail" class="block text-sm text-slate-200 mt-1"></span>
-        </button>
-      </div>
-      <p class="text-slate-400 text-xs mt-3">Chạm lựa chọn hoặc nhấn phím 1 / 2</p>
+      <div id="upgrade-options" class="grid gap-3"></div>
+      <p class="text-slate-400 text-xs mt-3">Chạm một trong 3 nâng cấp</p>
     </div>
   </div>
 
@@ -172,7 +163,8 @@
   <!-- KHUNG GAME CANVAS (320x460) -->
   <div id="game-frame" class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
-    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.16.2</span>
+    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.18.0</span>
+    <div id="mission-hud" class="hidden absolute top-2 right-2 z-10 max-w-[185px] rounded-lg border border-amber-400/60 bg-slate-950/80 px-2 py-1 pointer-events-none text-right"><div class="text-[9px] font-bold text-amber-300">🎯 NHIỆM VỤ</div><div id="mission-text" class="text-[10px] font-bold text-white"></div><div id="mission-state" class="text-[8px] text-emerald-300"></div></div>
     <!-- Nút cố định: pointerdown và click bàn phím gắn trong js/06-controls.js. -->
     <button id="ultimate-button" type="button"
       class="ultimate-button" aria-disabled="true" aria-label="Tuyệt kỹ chưa nạp đầy">
@@ -188,22 +180,23 @@
     </div>
   </div>
 
-  <script src="js/01-audio.js?v=1.17.1"></script>
-  <script src="js/02-state.js?v=1.17.1"></script>
-  <script src="js/03-characters.js?v=1.17.1"></script>
-  <script src="js/04-weapons-enemies.js?v=1.17.1"></script>
-  <script src="js/04-enemy-sprites.js?v=1.17.1"></script>
-  <script src="js/04-movement.js?v=1.17.1"></script>
-  <script src="js/04-boss-art.js?v=1.17.1"></script>
-  <script src="js/04-final-boss-art.js?v=1.17.1"></script>
-  <script src="js/04-final-guardians-art.js?v=1.17.1"></script>
-  <script src="js/04-final-boss.js?v=1.17.1"></script>
-  <script src="js/04-bosses.js?v=1.17.1"></script>
-  <script src="js/04-boss-intro.js?v=1.17.1"></script>
-  <script src="js/05-ultimate.js?v=1.17.1"></script>
-  <script src="js/05-results.js?v=1.17.1"></script>
-  <script src="js/05-boss-rewards.js?v=1.17.1"></script>
-  <script src="js/05-engine.js?v=1.17.1"></script>
-  <script src="js/06-controls.js?v=1.17.1"></script>
+  <script src="js/01-audio.js?v=1.18.0"></script>
+  <script src="js/02-state.js?v=1.18.0"></script>
+  <script src="js/03-characters.js?v=1.18.0"></script>
+  <script src="js/04-weapons-enemies.js?v=1.18.0"></script>
+  <script src="js/04-enemy-sprites.js?v=1.18.0"></script>
+  <script src="js/04-movement.js?v=1.18.0"></script>
+  <script src="js/04-wave-systems.js?v=1.18.0"></script>
+  <script src="js/04-boss-art.js?v=1.18.0"></script>
+  <script src="js/04-final-boss-art.js?v=1.18.0"></script>
+  <script src="js/04-final-guardians-art.js?v=1.18.0"></script>
+  <script src="js/04-final-boss.js?v=1.18.0"></script>
+  <script src="js/04-bosses.js?v=1.18.0"></script>
+  <script src="js/04-boss-intro.js?v=1.18.0"></script>
+  <script src="js/05-ultimate.js?v=1.18.0"></script>
+  <script src="js/05-results.js?v=1.18.0"></script>
+  <script src="js/05-boss-rewards.js?v=1.18.0"></script>
+  <script src="js/05-engine.js?v=1.18.0"></script>
+  <script src="js/06-controls.js?v=1.18.0"></script>
 </body>
 </html>
