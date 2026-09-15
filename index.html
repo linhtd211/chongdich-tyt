@@ -6,7 +6,7 @@
   <title>Bác Sĩ Diệt Khuẩn v1.19.0 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=1.19.0">
+  <link rel="stylesheet" href="css/style.css?v=1.19.1">
 </head>
 <body class="text-white flex flex-col items-center justify-between h-full p-2">
 
@@ -180,13 +180,9 @@
   <div id="game-frame" class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
     <div id="death-sequence" class="hidden absolute inset-0 z-30 pointer-events-auto">
-      <div class="death-caption">💫 ỐI... GỌI CẤP CỨU!</div>
-      <div id="death-hero" class="death-hero">😵</div>
-      <div class="medical-team"><span>🧑‍⚕️</span><span class="stretcher">🛏️ <span>😵</span></span><span>🧑‍⚕️</span></div>
-      <div class="ambulance-light">🚨</div><div class="ambulance">🚑</div><div class="ambulance-smoke">💨💨</div>
       <button type="button" onclick="skipDeathSequence()" class="absolute top-2 right-2 rounded-lg bg-slate-900/80 border border-slate-500 px-2 py-1 text-[10px] text-slate-200">BỎ QUA ▶</button>
     </div>
-    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.19.0</span>
+    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.19.1</span>
     <div id="mission-hud" class="hidden absolute top-2 right-2 z-10 max-w-[185px] rounded-lg border border-amber-400/60 bg-slate-950/80 px-2 py-1 pointer-events-none text-right"><div class="text-[9px] font-bold text-amber-300">🎯 NHIỆM VỤ</div><div id="mission-text" class="text-[10px] font-bold text-white"></div><div id="mission-state" class="text-[8px] text-emerald-300"></div></div>
     <!-- Nút cố định: pointerdown và click bàn phím gắn trong js/06-controls.js. -->
     <button id="ultimate-button" type="button"
@@ -203,24 +199,24 @@
     </div>
   </div>
 
-  <script src="js/01-audio.js?v=1.19.0"></script>
-  <script src="js/02-state.js?v=1.19.0"></script>
-  <script src="js/03-characters.js?v=1.19.0"></script>
-  <script src="js/04-weapons-enemies.js?v=1.19.0"></script>
-  <script src="js/04-enemy-sprites.js?v=1.19.0"></script>
-  <script src="js/04-movement.js?v=1.19.0"></script>
-  <script src="js/04-wave-systems.js?v=1.19.0"></script>
-  <script src="js/04-boss-art.js?v=1.19.0"></script>
-  <script src="js/04-final-boss-art.js?v=1.19.0"></script>
-  <script src="js/04-final-guardians-art.js?v=1.19.0"></script>
-  <script src="js/04-final-boss.js?v=1.19.0"></script>
-  <script src="js/04-bosses.js?v=1.19.0"></script>
-  <script src="js/04-boss-intro.js?v=1.19.0"></script>
-  <script src="js/05-ultimate.js?v=1.19.0"></script>
-  <script src="js/05-results.js?v=1.19.0"></script>
-  <script src="js/05-boss-rewards.js?v=1.19.0"></script>
-  <script src="js/05-engine.js?v=1.19.0"></script>
-  <script src="js/06-controls.js?v=1.19.0"></script>
-  <script src="js/07-presentation.js?v=1.19.0"></script>
+  <script src="js/01-audio.js?v=1.19.1"></script>
+  <script src="js/02-state.js?v=1.19.1"></script>
+  <script src="js/03-characters.js?v=1.19.1"></script>
+  <script src="js/04-weapons-enemies.js?v=1.19.1"></script>
+  <script src="js/04-enemy-sprites.js?v=1.19.1"></script>
+  <script src="js/04-movement.js?v=1.19.1"></script>
+  <script src="js/04-wave-systems.js?v=1.19.1"></script>
+  <script src="js/04-boss-art.js?v=1.19.1"></script>
+  <script src="js/04-final-boss-art.js?v=1.19.1"></script>
+  <script src="js/04-final-guardians-art.js?v=1.19.1"></script>
+  <script src="js/04-final-boss.js?v=1.19.1"></script>
+  <script src="js/04-bosses.js?v=1.19.1"></script>
+  <script src="js/04-boss-intro.js?v=1.19.1"></script>
+  <script src="js/05-ultimate.js?v=1.19.1"></script>
+  <script src="js/05-results.js?v=1.19.1"></script>
+  <script src="js/05-boss-rewards.js?v=1.19.1"></script>
+  <script src="js/05-engine.js?v=1.19.1"></script>
+  <script src="js/06-controls.js?v=1.19.1"></script>
+  <script src="js/07-presentation.js?v=1.19.1"></script>
 </body>
 </html>

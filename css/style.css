@@ -75,23 +75,6 @@ input, textarea, [contenteditable="true"] {
   touch-action: manipulation !important;
 }
 
-/* v1.19.0 — Intro/tutorial + funny medical evacuation */
+/* v1.19.1 — Intro/tutorial + Canvas-native medical evacuation */
 .tutorial-dot{width:8px;height:8px;border-radius:999px;background:#475569}.tutorial-dot.active{background:#34d399;box-shadow:0 0 10px #34d399}
-#death-sequence{background:linear-gradient(to bottom,rgba(2,6,23,.20),rgba(2,6,23,.72));overflow:hidden}
-.death-caption{position:absolute;top:15%;left:0;right:0;text-align:center;font-family:'VT323',monospace;font-size:32px;color:#fda4af;text-shadow:0 2px 0 #881337;animation:deathPop .45s ease-out}
-.death-hero{position:absolute;left:calc(50% - 20px);bottom:56px;font-size:36px;transform:rotate(82deg);animation:heroFall .5s ease-out both}
-.medical-team{position:absolute;left:-180px;bottom:42px;display:flex;align-items:center;gap:2px;font-size:35px;white-space:nowrap;animation:medicsIn 1.25s 0.55s ease-out forwards,medicsToAmbulance 1.15s 2.05s ease-in forwards}
-.stretcher{display:inline-flex;align-items:center;font-size:30px;transform:translateY(3px);animation:stretcherBounce .22s infinite alternate}
-.ambulance{position:absolute;right:-145px;bottom:35px;font-size:70px;filter:drop-shadow(0 4px 2px rgba(0,0,0,.35));animation:ambulanceArrive .85s 1.15s ease-out forwards,ambulanceGo 1.05s 3.05s ease-in forwards}
-.ambulance-light{position:absolute;right:58px;bottom:103px;font-size:19px;opacity:0;animation:sirenBlink .25s 1.2s infinite alternate}
-.ambulance-smoke{position:absolute;right:18px;bottom:48px;font-size:28px;opacity:0;animation:smokeGo 1s 3.1s ease-out forwards}
-@keyframes deathPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes heroFall{from{transform:rotate(0) translateY(-20px);opacity:.4}to{transform:rotate(82deg);opacity:1}}
-@keyframes medicsIn{to{left:calc(50% - 92px)}}
-@keyframes medicsToAmbulance{from{left:calc(50% - 92px)}to{left:calc(100% - 145px);opacity:.1}}
-@keyframes stretcherBounce{to{transform:translateY(-2px)}}
-@keyframes ambulanceArrive{to{right:-20px}}
-@keyframes ambulanceGo{from{right:-20px}to{right:125%;transform:rotate(-2deg)}}
-@keyframes sirenBlink{from{opacity:.2;transform:scale(.8)}to{opacity:1;transform:scale(1.25)}}
-@keyframes smokeGo{0%{opacity:0}20%{opacity:1}100%{opacity:0;right:80%;transform:scale(2)}}
-@media (prefers-reduced-motion: reduce){.medical-team,.ambulance,.death-hero,.ambulance-light,.ambulance-smoke,.stretcher{animation-duration:.01ms!important;animation-delay:0s!important}}
+#death-sequence{background:transparent;overflow:hidden}
