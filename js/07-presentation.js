@@ -62,8 +62,37 @@ function deathFrame(now){
   else if(t<1.55){const p=dease((t-.65)/.9),sx=350-p*170,ph=t*3.4;drawCurrentHeroCanvas(c,px,py+4,1,Math.PI/2);drawStretcherCanvas(c,sx,394,Math.sin(ph*DTAU),false);drawMedicCanvas(c,sx-45,385,ph,1,false);drawMedicCanvas(c,sx+45,385,ph,-1,false);drawDeathCaption(c,'ĐỘI CẤP CỨU ĐANG TỚI!');}
   else if(t<2.25){const p=dsmooth((t-1.55)/.7),sx=180;drawStretcherCanvas(c,sx,394,0,p>.48);if(p<=.48)drawCurrentHeroCanvas(c,px+(sx-px)*p*2,py+(362-py)*p*2,1-.28*p,Math.PI/2);drawMedicCanvas(c,sx-45,385,t*2.5,1,true);drawMedicCanvas(c,sx+45,385,t*2.5,-1,true);drawDeathCaption(c,'ĐƯA BỆNH NHÂN LÊN CÁNG');}
   else if(t<3.55){const p=dease((t-2.25)/1.3),sx=180+p*55,ph=t*3.4;drawAmbulanceCanvas(c,286,374,.95,t);drawStretcherCanvas(c,sx,394,Math.sin(ph*DTAU)*1.4,true);drawMedicCanvas(c,sx-45,385,ph,1,true);drawMedicCanvas(c,sx+45,385,ph,-1,true);drawDeathCaption(c,'KHẨN TRƯƠNG ĐƯA LÊN XE!');}
-  else if(t<4.45){const p=dsmooth((t-3.55)/.9),sx=235+p*47,ph=t*2.6;drawAmbulanceCanvas(c,286,374,1,t);c.save();c.beginPath();c.rect(0,0,260,460);c.clip();drawStretcherCanvas(c,sx,394,0,true);drawMedicCanvas(c,sx-45,385,ph,1,true);c.restore();drawMedicCanvas(c,190,385,ph,1,true);drawDeathCaption(c,'ĐƯA VÀO XE CỨU THƯƠNG');}
-  else if(t<6.05){const close=dsmooth((t-4.45)/.38),move=dease((t-4.95)/1.1),ax=286+move*155;drawAmbulanceCanvas(c,ax,374+Math.sin(t*25)*(move<.08?1.5:0),1-close,t);if(move>0){c.save();c.globalAlpha=1-move*.6;for(let i=0;i<4;i++)dCirc(c,ax-60-i*10,407+i%2*2,6+i*2,'#b8c0b6',null);c.restore()}drawDeathCaption(c,move<.05?'ĐÓNG CỬA...':'XE CỨU THƯƠNG RỜI HIỆN TRƯỜNG');}
+  else if(t<4.45){
+    // v1.19.5: giữ hai NVYT là hai actor liên tục, không xóa người trước rồi
+    // vẽ một bản sao của người sau. Front buông cáng và bước tới giữ cửa;
+    // Rear tiếp tục đẩy cáng vào khoang xe.
+    const p=dsmooth((t-3.55)/.9),sx=235+p*47,ph=t*2.6;
+    drawAmbulanceCanvas(c,286,374,1,t);
+    // Cáng + bệnh nhân đi sâu vào cửa sau; clip chỉ áp dụng cho cáng/bệnh nhân.
+    c.save();c.beginPath();c.rect(0,0,286,460);c.clip();drawStretcherCanvas(c,sx,394,0,true);c.restore();
+    // medicFront bắt đầu đúng tại x=190 (235-45) từ frame trước, rồi bước sang trái
+    // để giữ cửa. Không teleport và không đổi identity.
+    const frontX=190-18*dease(p), frontY=385-2*Math.sin(p*Math.PI);
+    drawMedicCanvas(c,frontX,frontY,ph,1,false);
+    // medicRear bắt đầu đúng tại x=280 (235+45) và đi cùng đuôi cáng trong lúc đẩy.
+    const rearX=sx+45;
+    drawMedicCanvas(c,rearX,385,ph,-1,true);
+    drawDeathCaption(c,'ĐƯA VÀO XE CỨU THƯƠNG');
+  }
+  else if(t<6.05){
+    const close=dsmooth((t-4.45)/.38),move=dease((t-4.95)/1.1),ax=286+move*155;
+    // Trong nhịp đóng cửa đầu tiên, cả hai NVYT vẫn là chính hai actor vừa dùng:
+    // người trước ở cạnh cửa, người sau lùi khỏi cáng. Họ mờ đi khi xe bắt đầu chạy
+    // thay vì biến mất/nhân bản tại ranh giới phase.
+    if(move<.08){
+      const q=dsmooth((t-4.45)/.5),ph=t*2.2;
+      drawMedicCanvas(c,172-5*q,383,ph,1,false);
+      drawMedicCanvas(c,327+12*q,385,ph,-1,false);
+    }
+    drawAmbulanceCanvas(c,ax,374+Math.sin(t*25)*(move<.08?1.5:0),1-close,t);
+    if(move>0){c.save();c.globalAlpha=1-move*.6;for(let i=0;i<4;i++)dCirc(c,ax-60-i*10,407+i%2*2,6+i*2,'#b8c0b6',null);c.restore()}
+    drawDeathCaption(c,move<.05?'ĐÓNG CỬA...':'XE CỨU THƯƠNG RỜI HIỆN TRƯỜNG');
+  }
   else {completeDeathSequence();return}
   deathSequenceRAF=requestAnimationFrame(deathFrame);
 }

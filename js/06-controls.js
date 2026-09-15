@@ -114,7 +114,18 @@
 
     function startGame() {
       AudioEngine.init();
+      // v1.19.4: THỬ LẠI phải đóng toàn bộ overlay kết quả trước khi khởi tạo ván mới.
+      // Trước đây game đã reset phía sau nhưng gameover-screen vẫn phủ lên trên,
+      // khiến nút trông như không hoạt động.
+      document.getElementById('gameover-screen').classList.add('hidden');
+      document.getElementById('victory-screen').classList.add('hidden');
       document.getElementById('char-select-screen').classList.add('hidden');
+      const deathSceneNow = document.getElementById('death-sequence');
+      if (deathSceneNow) deathSceneNow.classList.add('hidden');
+      if (typeof deathSequenceRAF !== 'undefined' && deathSequenceRAF) {
+        cancelAnimationFrame(deathSequenceRAF);
+        deathSequenceRAF = null;
+      }
       
       if (animationId) {
         cancelAnimationFrame(animationId);
