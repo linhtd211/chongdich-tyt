@@ -1,0 +1,80 @@
+/* GIAO DIỆN: nền, phông chữ và thiết lập thao tác chạm.
+   Sửa màu nền ở background; đổi phông ở font-family. */
+    * { 
+      -webkit-tap-highlight-color: transparent; 
+      touch-action: none; 
+      user-select: none;
+      box-sizing: border-box; 
+    }
+    html, body {
+      overscroll-behavior: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #064e3b 0%, #022c22 45%, #020617 100%);
+      font-family: 'Be Vietnam Pro', sans-serif;
+    }
+    .pixel-font { font-family: 'VT323', monospace; }
+
+/* Nút tròn cố định góc dưới bên phải; đường viền thể hiện phần trăm đã nạp. */
+.ultimate-button {
+  position: absolute; right: 12px; bottom: 14px; z-index: 10;
+  width: 58px; height: 58px; padding: 0;
+  border: 0; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; font: 700 20px 'Be Vietnam Pro', sans-serif;
+  background: radial-gradient(circle, #0f172a 60%, transparent 62%),
+              conic-gradient(#22d3ee var(--charge, 0%), #334155 0);
+  box-shadow: 0 5px 18px #0009;
+  touch-action: none; cursor: pointer; user-select: none;
+}
+.ultimate-button[aria-disabled="true"] { opacity: .65; cursor: default; }
+.ultimate-button[aria-disabled="false"] { box-shadow: 0 0 20px #22d3eeb8; animation: ultimate-pulse 1.4s ease-in-out infinite; }
+.ultimate-icon { font-size: 23px; line-height: 1; }
+.ultimate-short { font-size: 10px; line-height: 1; }
+@keyframes ultimate-pulse { 50% { box-shadow: 0 0 28px #22d3ee; } }
+
+/* Tên boss dài được chia dòng đẹp khi vừa vào trận. */
+.boss-announcement { max-width: 92%; margin-inline: auto; font-size: 31px; line-height: 1.08; color: #fda4af; text-shadow: 0 2px 12px #000, 0 0 18px #fb7185; }
+/* Bằng khen cuối game: chữ và hoa văn CSS nhẹ, luôn đọc được trên điện thoại. */
+.victory-certificate {
+  background: linear-gradient(145deg, #fff9df, #edd9a1);
+  border: 6px double #ac813e;
+  box-shadow: inset 0 0 0 2px #f8ebc4, 0 12px 28px #0005;
+}
+
+/* v1.16.2 - GAME INPUT LOCK
+   Ngăn trình duyệt bôi đen chữ/kéo phần tử khi chơi nhưng không khóa control nhập liệu nếu bổ sung sau này. */
+html, body, #game-frame, #game-frame *, canvas,
+#char-select-screen, #char-select-screen *,
+#game-over-screen, #game-over-screen *,
+.ultimate-panel, .ultimate-panel * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+#game-frame, #gameCanvas {
+  touch-action: none !important;
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+img, canvas {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* Giữ khả năng chọn/nhập văn bản nếu game có form ở phiên bản sau. */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+  touch-action: manipulation !important;
+}
+
+/* v1.19.1 — Intro/tutorial + Canvas-native medical evacuation */
+.tutorial-dot{width:8px;height:8px;border-radius:999px;background:#475569}.tutorial-dot.active{background:#34d399;box-shadow:0 0 10px #34d399}
+#death-sequence{background:transparent;overflow:hidden}
