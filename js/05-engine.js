@@ -494,6 +494,6 @@
         document.getElementById('wave-notice').classList.add('hidden');
         updateUltimateHud();
         document.getElementById('ultimate-effect').textContent = '';
-        finishGame();
+        if (typeof startDeathSequence === 'function') startDeathSequence(); else finishGame();
       }
     }

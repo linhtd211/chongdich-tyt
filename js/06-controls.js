@@ -130,6 +130,7 @@
       boss = null;
       bossRewardActive = false;
       document.getElementById('victory-screen').classList.add('hidden');
+      const deathScene = document.getElementById('death-sequence'); if (deathScene) deathScene.classList.add('hidden');
       document.getElementById('boss-reward-screen').classList.add('hidden');
       isTouching = false;
       movementPointerId = null;

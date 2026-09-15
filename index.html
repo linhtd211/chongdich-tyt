@@ -3,19 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Bác Sĩ Diệt Khuẩn v1.16.0 - Biệt Đội Y Tế Thạch Thất</title>
+  <title>Bác Sĩ Diệt Khuẩn v1.19.0 - Biệt Đội Y Tế Thạch Thất</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Be+Vietnam+Pro:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=1.18.1">
+  <link rel="stylesheet" href="css/style.css?v=1.19.0">
 </head>
 <body class="text-white flex flex-col items-center justify-between h-full p-2">
 
+  <!-- INTRO / HƯỚNG DẪN v1.19.0 -->
+  <div id="tutorial-screen" class="hidden absolute inset-0 z-[70] bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center">
+    <div class="w-full max-w-sm rounded-3xl border-2 border-emerald-400/60 bg-slate-900/95 p-5 shadow-[0_0_35px_rgba(52,211,153,.25)]">
+      <div id="tutorial-icon" class="text-6xl mb-2">🦠</div>
+      <div id="tutorial-kicker" class="pixel-font text-2xl text-amber-300">BÁO ĐỘNG DỊCH BỆNH!</div>
+      <h2 id="tutorial-title" class="pixel-font text-4xl text-emerald-300 mt-1">BIỆT ĐỘI Y TẾ XUẤT KÍCH</h2>
+      <div id="tutorial-body" class="text-sm text-slate-200 leading-relaxed mt-4 min-h-[130px]"></div>
+      <div class="flex justify-center gap-2 my-4"><span class="tutorial-dot active"></span><span class="tutorial-dot"></span><span class="tutorial-dot"></span></div>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="tutorial-skip" type="button" onclick="closeTutorial()" class="rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-sm">Bỏ qua</button>
+        <button id="tutorial-next" type="button" onclick="nextTutorial()" class="rounded-xl bg-emerald-600 px-3 py-2 font-bold">TIẾP THEO ▶</button>
+      </div>
+    </div>
+  </div>
   <!-- MÀN HÌNH CHỌN NHÂN VẬT: sửa tên, lời giới thiệu và nút bắt đầu tại đây. -->
   <div id="char-select-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4 text-center">
     <div class="pixel-font text-4xl text-emerald-400 mb-0.5 font-bold drop-shadow-[0_0_12px_rgba(52,211,153,0.8)]">
       BIỆT ĐỘI Y TẾ TYT THẠCH THẤT
     </div>
-    <p class="text-xs text-cyan-300 mb-1">v1.16.0 · trùm cuối 3 cột máu</p>
+    <p class="text-xs text-cyan-300 mb-1">v1.19.0 · Intro & Funny Game Over</p>
     <p class="text-xs text-slate-300 mb-1">Chọn nhân vật chuyên môn</p>
     <p class="text-amber-300 text-xs mb-3">🏆 Kỷ lục: <strong id="intro-record">0</strong> điểm · Wave xa nhất: <strong id="intro-wave">0</strong></p>
 
@@ -54,9 +68,10 @@
       🩺 <strong>Bác Sĩ:</strong> Đồ scrubs xanh, kính tròn to. Bắn ra tia <strong>Laser Kim Tiêm Xuyên Thấu</strong> triệt hạ thẳng hàng.
     </div>
 
-    <button onclick="startGame()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 active:scale-95 pixel-font text-3xl px-10 py-2.5 rounded-2xl border-2 border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
-      ▶ VÀO VÙNG DỊCH
-    </button>
+    <div class="flex gap-2 items-center justify-center">
+      <button onclick="openTutorial(true)" class="rounded-xl border border-sky-400 bg-slate-900 px-4 py-2 text-sm font-bold text-sky-200">📖 HƯỚNG DẪN</button>
+      <button onclick="startGame()" class="bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 active:scale-95 pixel-font text-3xl px-7 py-2.5 rounded-2xl border-2 border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.5)]">▶ VÀO VÙNG DỊCH</button>
+    </div>
   </div>
 
   <!-- GIỚI THIỆU BOSS: tạm dừng trận, hiển thị thông tin tham chiếu và nguồn y tế. -->
@@ -109,10 +124,10 @@
     </div>
   </div>
   <div id="gameover-screen" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex flex-col items-center justify-center p-5 text-center overflow-y-auto">
-    <div class="pixel-font text-5xl text-rose-400 font-bold">KẾT THÚC VÁN!</div>
+    <div class="pixel-font text-5xl text-rose-400 font-bold">🏥 NHIỆM VỤ THẤT BẠI</div>
     <div id="new-record-badge" class="hidden rounded-full bg-amber-400 px-4 py-1 text-slate-950 text-xs font-bold my-2">🏆 KỶ LỤC MỚI!</div>
     <div class="w-full max-w-xs rounded-2xl border border-emerald-500/50 bg-slate-900/90 p-4 my-4 shadow-lg">
-      <div class="pixel-font text-5xl text-amber-300">ĐIỂM: <span id="final-score">0</span></div>
+      <p class="text-rose-200 text-sm mb-2">Nhân vật đã được đưa đi cấp cứu an toàn 😵‍💫</p><div class="pixel-font text-5xl text-amber-300">ĐIỂM: <span id="final-score">0</span></div>
       <div class="grid grid-cols-2 gap-2 text-sm mt-3 text-left">
         <div class="rounded-lg bg-slate-800 p-2">Wave đạt được<br><strong id="final-wave" class="text-sky-300 text-xl">1</strong></div>
         <div class="rounded-lg bg-slate-800 p-2">Nhân vật<br><strong id="final-hero" class="text-emerald-300">Bác sĩ</strong></div>
@@ -120,9 +135,10 @@
         <div class="rounded-lg bg-slate-800 p-2">Wave xa nhất<br><strong id="final-best-wave" class="text-amber-300 text-xl">0</strong></div>
       </div>
     </div>
-    <button onclick="openCharSelect()" class="bg-gradient-to-r from-emerald-600 to-teal-500 active:scale-95 pixel-font text-3xl px-8 py-2 rounded-xl border-2 border-emerald-300">
-      ▶ CHƠI LẠI / ĐỔI NHÂN VẬT
-    </button>
+    <div class="grid grid-cols-2 gap-2 w-full max-w-xs">
+      <button onclick="startGame()" class="bg-emerald-600 active:scale-95 pixel-font text-2xl px-3 py-2 rounded-xl border border-emerald-300">🔄 THỬ LẠI</button>
+      <button onclick="openCharSelect()" class="bg-slate-700 active:scale-95 pixel-font text-2xl px-3 py-2 rounded-xl border border-slate-400">🏠 MENU</button>
+    </div>
   </div>
 
   <!-- HƯỚNG DẪN VÀ TẠM DỪNG: thay lời hướng dẫn tại đây. -->
@@ -163,7 +179,14 @@
   <!-- KHUNG GAME CANVAS (320x460) -->
   <div id="game-frame" class="relative w-full max-w-sm flex-1 my-1 rounded-2xl overflow-hidden border-2 border-emerald-700/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] bg-slate-950 flex items-center justify-center">
     <canvas id="gameCanvas" width="320" height="460" class="w-full h-full object-contain"></canvas>
-    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.18.2</span>
+    <div id="death-sequence" class="hidden absolute inset-0 z-30 pointer-events-auto">
+      <div class="death-caption">💫 ỐI... GỌI CẤP CỨU!</div>
+      <div id="death-hero" class="death-hero">😵</div>
+      <div class="medical-team"><span>🧑‍⚕️</span><span class="stretcher">🛏️ <span>😵</span></span><span>🧑‍⚕️</span></div>
+      <div class="ambulance-light">🚨</div><div class="ambulance">🚑</div><div class="ambulance-smoke">💨💨</div>
+      <button type="button" onclick="skipDeathSequence()" class="absolute top-2 right-2 rounded-lg bg-slate-900/80 border border-slate-500 px-2 py-1 text-[10px] text-slate-200">BỎ QUA ▶</button>
+    </div>
+    <span class="absolute top-1 left-1 text-[9px] text-cyan-300/80 pointer-events-none">v1.19.0</span>
     <div id="mission-hud" class="hidden absolute top-2 right-2 z-10 max-w-[185px] rounded-lg border border-amber-400/60 bg-slate-950/80 px-2 py-1 pointer-events-none text-right"><div class="text-[9px] font-bold text-amber-300">🎯 NHIỆM VỤ</div><div id="mission-text" class="text-[10px] font-bold text-white"></div><div id="mission-state" class="text-[8px] text-emerald-300"></div></div>
     <!-- Nút cố định: pointerdown và click bàn phím gắn trong js/06-controls.js. -->
     <button id="ultimate-button" type="button"
@@ -180,23 +203,24 @@
     </div>
   </div>
 
-  <script src="js/01-audio.js?v=1.18.1"></script>
-  <script src="js/02-state.js?v=1.18.1"></script>
-  <script src="js/03-characters.js?v=1.18.1"></script>
-  <script src="js/04-weapons-enemies.js?v=1.18.1"></script>
-  <script src="js/04-enemy-sprites.js?v=1.18.1"></script>
-  <script src="js/04-movement.js?v=1.18.1"></script>
-  <script src="js/04-wave-systems.js?v=1.18.1"></script>
-  <script src="js/04-boss-art.js?v=1.18.1"></script>
-  <script src="js/04-final-boss-art.js?v=1.18.1"></script>
-  <script src="js/04-final-guardians-art.js?v=1.18.1"></script>
-  <script src="js/04-final-boss.js?v=1.18.1"></script>
-  <script src="js/04-bosses.js?v=1.18.1"></script>
-  <script src="js/04-boss-intro.js?v=1.18.1"></script>
-  <script src="js/05-ultimate.js?v=1.18.1"></script>
-  <script src="js/05-results.js?v=1.18.1"></script>
-  <script src="js/05-boss-rewards.js?v=1.18.2"></script>
-  <script src="js/05-engine.js?v=1.18.1"></script>
-  <script src="js/06-controls.js?v=1.18.1"></script>
+  <script src="js/01-audio.js?v=1.19.0"></script>
+  <script src="js/02-state.js?v=1.19.0"></script>
+  <script src="js/03-characters.js?v=1.19.0"></script>
+  <script src="js/04-weapons-enemies.js?v=1.19.0"></script>
+  <script src="js/04-enemy-sprites.js?v=1.19.0"></script>
+  <script src="js/04-movement.js?v=1.19.0"></script>
+  <script src="js/04-wave-systems.js?v=1.19.0"></script>
+  <script src="js/04-boss-art.js?v=1.19.0"></script>
+  <script src="js/04-final-boss-art.js?v=1.19.0"></script>
+  <script src="js/04-final-guardians-art.js?v=1.19.0"></script>
+  <script src="js/04-final-boss.js?v=1.19.0"></script>
+  <script src="js/04-bosses.js?v=1.19.0"></script>
+  <script src="js/04-boss-intro.js?v=1.19.0"></script>
+  <script src="js/05-ultimate.js?v=1.19.0"></script>
+  <script src="js/05-results.js?v=1.19.0"></script>
+  <script src="js/05-boss-rewards.js?v=1.19.0"></script>
+  <script src="js/05-engine.js?v=1.19.0"></script>
+  <script src="js/06-controls.js?v=1.19.0"></script>
+  <script src="js/07-presentation.js?v=1.19.0"></script>
 </body>
 </html>
