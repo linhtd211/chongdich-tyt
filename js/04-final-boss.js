@@ -1,7 +1,7 @@
 /* TRẬN CUỐI: hộ vệ là vật thể riêng, chắn đạn khi thật sự chạm vào chúng.
    Không dùng lính thường hoặc hình tải ngoài. Tối đa ba hộ vệ mỗi lần gọi;
    tuyệt kỹ Điều dưỡng quét qua được cả hộ vệ và trùm. */
-const FINAL_WAVE = 39;
+const FINAL_WAVE = 52;
 const FINAL_GUARD_HP = 12; // Máu thật sau khi phá giáp.
 const FINAL_GUARD_ARMOR = 6; // Giáp nhận sát thương trước máu.
 

@@ -64,7 +64,7 @@ function downloadVictoryCertificate() {
   g.fillText('Đã đánh bại Chúa Tể Đại Dịch', 450, 774);
   g.fillText('và bảo vệ vùng dịch trong trò chơi.', 450, 824);
   g.fillStyle = '#95602f';g.font = 'bold 38px sans-serif';
-  g.fillText(`WAVE 39     ·     ${score.toLocaleString('vi-VN')} ĐIỂM`, 450, 940);
+  g.fillText(`WAVE 52     ·     ${score.toLocaleString('vi-VN')} ĐIỂM`, 450, 940);
   g.fillStyle = '#69756d';g.font = '24px sans-serif';
   g.fillText('Thành tích trò chơi · không phải chứng nhận y tế', 450, 1080);
   const a = document.createElement('a');a.download = 'Bang_khen_dap_tat_dich.png';

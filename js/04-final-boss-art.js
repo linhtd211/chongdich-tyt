@@ -150,7 +150,7 @@
     c.lineWidth=.5;c.strokeStyle='#24534d88';for(let x=0;x<320;x+=24){c.beginPath();c.moveTo(x,0);c.lineTo(x,460);c.stroke()}
     for(let y=0;y<460;y+=24){c.beginPath();c.moveTo(0,y);c.lineTo(320,y);c.stroke()}
     c.fillStyle=radial(c,160,217,194,[[0,'#773a8055'],[1,'#773a8000']]);c.fillRect(0,31,320,352);
-    c.textAlign='center';c.font='bold 12px sans-serif';c.fillStyle='#ffcfb3';c.fillText('WAVE 39  ·  CHÚA TỂ ĐẠI DỊCH',160,20);
+    c.textAlign='center';c.font='bold 12px sans-serif';c.fillStyle='#ffcfb3';c.fillText('WAVE 52  ·  CHÚA TỂ ĐẠI DỊCH',160,20);
     // Three-part health bar mirrors final-boss concept. Only show a hint of the special.
     const bar=['#e4a37f','#d16694','#9f60b2'];for(let i=0;i<3;i++){
       c.fillStyle=bar[i];c.fillRect(11+i*100,33,96,7)}
