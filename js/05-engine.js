@@ -326,7 +326,7 @@
     }
 
     // Chỉ vẽ một lần cho mỗi khung hình màn hình, kể cả khi phải mô phỏng nhiều bước.
-    function render() {
+    function render(hidePlayer = false) {
       // --- 7. RENDER RA MÀN HÌNH ---
       ctx.fillStyle = '#02120e';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -426,7 +426,7 @@
         ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
       }
 
-      drawPlayer(player.x, player.y);
+      if (!hidePlayer) drawPlayer(player.x, player.y);
       renderUltimate();
 
     }
@@ -477,6 +477,11 @@
           cancelAnimationFrame(animationId);
           animationId = null;
         }
+        // Chụp nền Game Over TRƯỚC khi dọn battlefield. render(true) sẽ vẽ lại
+        // đúng khung cảnh hiện tại nhưng KHÔNG vẽ player, tránh nhân vật bị nhân đôi
+        // khi renderer cứu thương vẽ chính player lần thứ hai trên cáng.
+        if (typeof startDeathSequence === 'function') startDeathSequence();
+
         bullets = [];
         enemyBullets = [];
         powerUps = [];
@@ -494,6 +499,6 @@
         document.getElementById('wave-notice').classList.add('hidden');
         updateUltimateHud();
         document.getElementById('ultimate-effect').textContent = '';
-        if (typeof startDeathSequence === 'function') startDeathSequence(); else finishGame();
+        if (typeof startDeathSequence !== 'function') finishGame();
       }
     }

@@ -69,8 +69,26 @@ function deathFrame(now){
 }
 function startDeathSequence(){
   if(deathSequenceRAF)cancelAnimationFrame(deathSequenceRAF);
-  // Chụp chính khung Canvas cuối cùng của trận đấu làm nền cho hoạt cảnh.
+  // Vẽ lại battlefield mà KHÔNG có player rồi mới chụp snapshot. Nếu chụp trực tiếp
+  // canvas cuối trận thì player đứng vẫn nằm trong bitmap nền và sẽ bị nhân đôi
+  // khi chính renderer player được vẽ lại trên cáng.
+  if (typeof render === 'function') render(true);
   deathSceneSnapshot=document.createElement('canvas');deathSceneSnapshot.width=canvas.width;deathSceneSnapshot.height=canvas.height;deathSceneSnapshot.getContext('2d').drawImage(canvas,0,0);
+  // v1.19.3: lớp an toàn chống nhân đôi cho TẤT CẢ hero.
+  // Không phụ thuộc renderer của doctor/nurse/sanitizer: xóa vùng sprite gốc khỏi snapshot
+  // rồi dựng lại nền lưới tại đúng vùng đó. Nhân vật duy nhất sau đây là instance
+  // do deathFrame điều khiển (ngã -> cáng -> xe).
+  {
+    const sc=deathSceneSnapshot.getContext('2d');
+    const pad=12, rx=Math.max(0,Math.floor(player.x-pad)), ry=Math.max(0,Math.floor(player.y-pad));
+    const rw=Math.min(canvas.width-rx,32+pad*2), rh=Math.min(canvas.height-ry,42+pad*2);
+    sc.save();sc.beginPath();sc.rect(rx,ry,rw,rh);sc.clip();
+    sc.fillStyle='#02120e';sc.fillRect(rx,ry,rw,rh);
+    sc.strokeStyle='rgba(6, 78, 59, 0.35)';sc.lineWidth=1;
+    for(let gx=Math.floor(rx/24)*24;gx<=rx+rw;gx+=24){sc.beginPath();sc.moveTo(gx,ry);sc.lineTo(gx,ry+rh);sc.stroke()}
+    for(let gy=Math.floor(ry/24)*24;gy<=ry+rh;gy+=24){sc.beginPath();sc.moveTo(rx,gy);sc.lineTo(rx+rw,gy);sc.stroke()}
+    sc.restore();
+  }
   document.getElementById('death-sequence').classList.remove('hidden');deathSequenceStart=performance.now();deathSequenceRAF=requestAnimationFrame(deathFrame);
 }
 function completeDeathSequence(){if(deathSequenceRAF){cancelAnimationFrame(deathSequenceRAF);deathSequenceRAF=null}document.getElementById('death-sequence').classList.add('hidden');finishGame()}
